@@ -15,4 +15,4 @@ jobs:
       - name: Delete old Docker Container
         run: docker rm -f magicxgame-admin-container || true
       - name: Run docker Container
-        run: sudo docker run -d -p 8080:8080 --name magicxgame-admin-container vaaiibhav/magicxgame-admin
+        run: sudo docker run -d -p 3000:3000 --name magicxgame-admin-container vaaiibhav/magicxgame-admin
