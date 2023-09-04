@@ -13,9 +13,9 @@ RUN npm install
 # RUN npm ci --omit=dev
 
 # Bundle app source
-RUN npm run build
+RUN npm run dev
 
 COPY . .
 
-EXPOSE 3000
-CMD ["npm", "start"]
+EXPOSE 3000 3001 3002
+# CMD ["npm", "start"]
