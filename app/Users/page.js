@@ -18,7 +18,7 @@ function page(props) {
             </div>
             <div className="w-full px-4 py-5 bg-white rounded-lg shadow">
               <div className="text-sm font-medium text-gray-500 truncate">
-                Total Profit
+                Total Profit After Business
               </div>
               <div className="mt-1 text-3xl font-semibold text-gray-900">
                 $ 450k
