@@ -18,4 +18,4 @@ jobs:
       - name: Build the Docker image
         run: docker build -t magicxgame-admin .
       - name: Push to Dockerhub
-        run: docker push vaaiibhav/magicxgame-admin:latest
+        run: docker push vaaiibhav/magicxgame-admin
