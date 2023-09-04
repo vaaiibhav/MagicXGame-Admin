@@ -3,7 +3,7 @@ name: Repo Docker Testt
 
 on: push
 jobs:
-  my-job:
+  test-job:
     runs-on: ubuntu-latest
     steps:
       - name: my-step
