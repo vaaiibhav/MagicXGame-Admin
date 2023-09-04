@@ -16,6 +16,6 @@ jobs:
           DOCKER_PASSWORD: ${{secrets.DOCKER_PASSWORD}}
         run: docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD
       - name: Build the Docker image
-        run: docker build -t magicxgame-admin .
+        run: docker build -t vaaiibhav/magicxgame-admin .
       - name: Push to Dockerhub
-        run: docker push vaaiibhav/magicxgame-admin
+        run: docker push vaaiibhav/magicxgame-admin:latest
