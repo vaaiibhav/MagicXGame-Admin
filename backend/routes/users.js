@@ -40,9 +40,12 @@ router.post("/pinupdate", async (req, res) => {
 
 router.post("/login", async (req, res) => {
   const { userName, userPass } = req.body;
+  if (!userName || !userPass) {
+    return res.status(401).json({ error: "Empty Credentials" });
+  }
   const user = await loginUser(userName, userPass);
   if (!user) {
-    res.status(401).json({ error: "Password Invalid" });
+    return res.status(401).json({ error: "Password Invalid" });
   }
   res.status(200).json(user);
 });
