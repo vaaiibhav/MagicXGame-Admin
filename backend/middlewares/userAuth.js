@@ -6,26 +6,23 @@ const {
   TOKEN_HEADER_KEY,
 } = require("../constants");
 
-const generateToken = () => {
-  let jwtSecretKey = JWT_SECRET_KEY;
-  let data = {
-    time: Date(),
-    userId: 12,
-  };
-
-  const token = jwt.sign(data, jwtSecretKey);
-  console.log("token:", token);
+const generateToken = (data) => {
+  const token = jwt.sign(data.dataValues, JWT_SECRET_KEY, {
+    expiresIn: "1d",
+  });
+  return token;
 };
 
-const validateToken = () => {
-  let tokenHeaderKey = TOKEN_HEADER_KEY;
-  let jwtSecretKey = JWT_SECRET_KEY;
-
+const validateToken = (req, res, next) => {
   try {
-    const token = req.header(tokenHeaderKey);
-
-    const verified = jwt.verify(token, jwtSecretKey);
+    const token = req.cookies.token;
+    if (!token) {
+      return res.json({ error: "No Token" });
+    }
+    const verified = jwt.verify(token, JWT_SECRET_KEY);
     if (verified) {
+      req.token = verified;
+      next();
       return "success";
     } else {
       // Access Denied
@@ -36,6 +33,7 @@ const validateToken = () => {
     return "error";
   }
 };
+
 const passwordHashing = async (body) => {
   const { password, pin } = body;
   const userPassHash = await bcrypt
@@ -62,18 +60,15 @@ const validateUser = async (password, hash) => {
   return bcrypt
     .compare(password, hash)
     .then((res) => {
-      console.log("res:", res);
       return res;
     })
     .catch((err) => console.error(err.message));
 };
 const compareUser = async (password) => {
-  console.log("password: -->", password);
   return bcrypt
     .hash(password, SALTROUNDS)
     .then((hash) => {
       userHash = hash;
-      console.log("Hash ", hash);
       return validateUser(password, hash);
     })
     .catch((err) => console.error(err.message));

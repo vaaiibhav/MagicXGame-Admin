@@ -47,7 +47,6 @@ const createUser = async (
 const userPinUpdate = async (body) => {
   const { userID } = body;
   const { userPassHash, userPinHash } = await passwordHashing(body);
-  console.log("userPassHash, userPinHash :", userPassHash, userPinHash);
   return await UserModel.update(
     { userPassHash, userPinHash },
     { where: { userID } }
@@ -74,13 +73,13 @@ const updateUser = async (
 const loginUser = async (userName, userPass) => {
   try {
     const userCred = await UserModel.findOne({ where: { userName } });
-    console.log("userCred:", userCred);
-
-    if (!userCred == null) {
+    if (userCred) {
       const loginAllowed = await validateUser(userPass, userCred.userPassHash);
       if (!loginAllowed) {
         return loginAllowed;
       }
+      const userToken = generateToken(userCred);
+      return userToken ? userToken : false;
     }
     return userCred ? userCred : false;
   } catch (error) {

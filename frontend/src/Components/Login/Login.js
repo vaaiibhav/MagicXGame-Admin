@@ -1,12 +1,25 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import "../../index.css";
 import axios from "axios";
 import { BACKEND_URI } from "../../constants";
 import { useNavigate } from "react-router-dom";
-console.log("BACKEND_URI:", BACKEND_URI);
 
 const Login = () => {
   const navigate = useNavigate();
+  const [auth, setAuth] = useState(false);
+  const [token, setToken] = useState(false);
+  useEffect(() => {
+    async function getAuth() {
+      const auth = await axios.post(`${BACKEND_URI}/users/auth`, null, {
+        withCredentials: true,
+      });
+      if (auth.data.token) {
+        setToken(auth.data.token);
+        navigate("/dashboard");
+      }
+    }
+    getAuth();
+  }, []);
   const [values, setValues] = useState({
     userName: "",
     userPass: "",
@@ -14,10 +27,15 @@ const Login = () => {
   const [errorMessage, setErrorMessage] = React.useState("");
   const handleSubmit = async (e) => {
     e.preventDefault();
+    if (!values.userName || !values.userPass) {
+      return setErrorMessage("Empty Username or Password");
+    }
     try {
-      const response = await axios.post(`${BACKEND_URI}/users/login`, values);
+      const response = await axios.post(`${BACKEND_URI}/users/login`, values, {
+        withCredentials: true,
+      });
       if (response && response.status === 200) {
-        console.log("response:", response.data);
+        console.log("response:", response);
         navigate("/");
       }
     } catch (error) {

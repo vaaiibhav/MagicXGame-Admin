@@ -10,7 +10,6 @@ const {
   loginUser,
   userPinUpdate,
 } = require("../controllers/userController");
-console.log("controllers:", getAllUsers);
 
 const {
   simpleConsole,
@@ -19,19 +18,7 @@ const {
   successConsole,
   darkConsole,
 } = require("../utils/colorConsoler");
-const { passwordHashing } = require("../middlewares/userAuth");
-
-router.get("/:userName", async (req, res) => {
-  const { userName } = req.params;
-  const user = await getUserbyUserName(userName);
-  res.json({ user }).status(200);
-});
-
-router.get("/id/:id", async (req, res) => {
-  const { id } = req.params;
-  const user = await getUserbyId(id);
-  res.json({ user }).status(200);
-});
+const { passwordHashing, validateToken } = require("../middlewares/userAuth");
 
 router.post("/pinupdate", async (req, res) => {
   const result = await userPinUpdate(req.body);
@@ -45,23 +32,28 @@ router.post("/login", async (req, res) => {
   }
   const user = await loginUser(userName, userPass);
   if (!user) {
-    return res.status(401).json({ error: "Password Invalid" });
+    return res.status(409).json({ error: "Password Invalid" });
   }
-  res.status(200).json(user);
+  res.status(200).cookie("token", user).json({ message: "Success" });
 });
 
-router.get("/", async (req, res) => {
-  const { limit, offset } = req.query;
-  const users = await getAllUsers(limit, offset);
-  res.json({ users }).status(200);
+router.get("/logout", async (req, res) => {
+  res.status(200).clearCookie("token").json({ message: "success" });
 });
 
+router.get("/auth", validateToken, (req, res) => {
+  res.json({ message: "token", token: req.token });
+});
 router.delete("/id/:id", async (req, res) => {
   const { id } = req.params;
   const user = await deleteUserbyId(id);
   res.json({ user }).status(200);
 });
-
+router.get("/id/:id", async (req, res) => {
+  const { id } = req.params;
+  const user = await getUserbyId(id);
+  res.json({ user }).status(200);
+});
 router.post("/", async (req, res) => {
   const { userName, userCity, userType, userPhoneNumber, userPercentage } =
     req.body;
@@ -95,5 +87,16 @@ router.put("/", async (req, res) => {
     userID
   );
   res.json({ user }).status(200);
+});
+
+router.get("/user/:userName", async (req, res) => {
+  const { userName } = req.params;
+  const user = await getUserbyUserName(userName);
+  res.json({ user }).status(200);
+});
+router.get("/", async (req, res) => {
+  const { limit, offset } = req.query;
+  const users = await getAllUsers(limit, offset);
+  res.json({ users }).status(200);
 });
 module.exports = router;
