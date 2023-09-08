@@ -14,10 +14,13 @@ const UserModel = sequelize.define("Users", {
   userPassHash: { type: DataTypes.TEXT },
   userCity: { type: DataTypes.TEXT },
   userType: { type: DataTypes.TEXT },
-  userBalanceHash: { type: DataTypes.TEXT },
+  userBalance: { type: DataTypes.BIGINT },
   userPhoneNumber: { type: DataTypes.TEXT },
   userPercentage: { type: DataTypes.TEXT },
   userPinHash: { type: DataTypes.TEXT },
+  userMasterID: { type: DataTypes.BIGINT },
+  userSubAdminID: { type: DataTypes.BIGINT },
+  userLoginID: { type: DataTypes.BIGINT },
 });
 
 module.exports = UserModel;
