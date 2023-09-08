@@ -6,6 +6,7 @@ const {
   compareUser,
 } = require("../middlewares/userAuth");
 const { UserModel, UserLocation } = require("../models");
+const { dangerConsole } = require("../utils/colorConsoler");
 
 const getAllUsers = async (limit = 10, offset = 0) => {
   return await UserModel.findAll({
@@ -71,12 +72,21 @@ const updateUser = async (
 };
 
 const loginUser = async (userName, userPass) => {
-  const userCred = await UserModel.findOne({ where: { userName } });
-  const loginAllowed = await validateUser(userPass, userCred.userPassHash);
-  if (!loginAllowed) {
-    return loginAllowed;
+  try {
+    const userCred = await UserModel.findOne({ where: { userName } });
+    console.log("userCred:", userCred);
+
+    if (!userCred == null) {
+      const loginAllowed = await validateUser(userPass, userCred.userPassHash);
+      if (!loginAllowed) {
+        return loginAllowed;
+      }
+    }
+    return userCred ? userCred : false;
+  } catch (error) {
+    dangerConsole(error);
+    return error;
   }
-  return userCred;
 };
 module.exports = {
   getAllUsers,
