@@ -5,6 +5,8 @@ const cors = require("cors");
 const cookieParser = require("cookie-parser");
 const routes = require("./routes");
 const { FE_URI } = require("./constants");
+const helmet = require("helmet");
+const morgan = require("morgan");
 const {
   simpleConsole,
   warnConsole,
@@ -17,6 +19,10 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: false }));
+app.use(helmet());
+app.use(helmet().crossOriginresourcePolicy({ policy: "cross-origin" }));
+app.use(morgan("common"));
 app.use(
   cors({
     origin: FE_URI,
