@@ -9,6 +9,7 @@ const {
   updateUser,
   loginUser,
   userPinUpdate,
+  getAvailableUser,
 } = require("../controllers/userController");
 
 const {
@@ -26,15 +27,15 @@ router.post("/pinupdate", async (req, res) => {
 });
 
 router.post("/login", async (req, res) => {
-  const { userName, userPass } = req.body;
-  if (!userName || !userPass) {
+  const { userLoginID, userPass } = req.body;
+  if (!userLoginID || !userPass) {
     return res.status(401).json({ error: "Empty Credentials" });
   }
-  const user = await loginUser(userName, userPass);
+  const user = await loginUser(userLoginID, userPass);
   if (!user) {
     return res.status(409).json({ error: "Password Invalid" });
   }
-  res.status(200).cookie("token", user).json({ message: "Success" });
+  res.status(200).json({ token: user });
 });
 
 router.get("/logout", async (req, res) => {
@@ -89,6 +90,12 @@ router.put("/", async (req, res) => {
   res.json({ user }).status(200);
 });
 
+router.get("/avail/:userType/:userID", async (req, res) => {
+  console.log("req.params:", req.params);
+  const { userType, userID } = req.params;
+  const userCount = await getAvailableUser(userType, userID);
+  res.json({ userCount }).status(200);
+});
 router.get("/user/:userName", async (req, res) => {
   const { userName } = req.params;
   const user = await getUserbyUserName(userName);
@@ -97,6 +104,6 @@ router.get("/user/:userName", async (req, res) => {
 router.get("/", async (req, res) => {
   const { limit, offset } = req.query;
   const users = await getAllUsers(limit, offset);
-  res.json({ users }).status(200);
+  res.json(users).status(200);
 });
 module.exports = router;

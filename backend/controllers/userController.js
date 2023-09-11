@@ -7,19 +7,43 @@ const {
 } = require("../middlewares/userAuth");
 const { UserModel, UserLocation } = require("../models");
 const { dangerConsole } = require("../utils/colorConsoler");
-
+const {
+  TYPE_SUBADMIN,
+  TYPE_ADMIN,
+  TYPE_RETAILER,
+  TYPE_MASTER,
+} = require("../constants");
 const getAllUsers = async (limit = 10, offset = 0) => {
   return await UserModel.findAll({
     offset,
     limit,
-    attributes: {
-      exclude: ["userPassHash"],
-    },
+    attributes: [
+      "userID",
+      "userName",
+      "userPhoneNumber",
+      "userMasterID",
+      "userSubAdminID",
+      "userType",
+      "userBalance",
+      "userLoginID",
+      "userCity",
+    ],
   });
 };
 const getUserbyUserName = async (userName) => {
   return await UserModel.findOne({
     where: { userName },
+    attributes: [
+      "userID",
+      "userName",
+      "userPhoneNumber",
+      "userMasterID",
+      "userSubAdminID",
+      "userType",
+      "userBalance",
+      "userLoginID",
+      "userCity",
+    ],
   });
 };
 const getUserbyId = async (id) => {
@@ -37,7 +61,7 @@ const createUser = async (
   return await UserModel.create({
     userName,
     userCity,
-    userPassHash: "nop",
+    userPassHash: "",
     userType: "retailer",
     userBalanceHash: 0,
     userPhoneNumber,
@@ -69,10 +93,31 @@ const updateUser = async (
     { where: { userID } }
   );
 };
+const getAvailableUser = async (userType, userID) => {
+  console.log("userType, userID:", userType, userID);
+  if (userType === TYPE_ADMIN) {
+    const availCount = await UserModel.findAll({
+      where: { userType: { TYPE_SUBADMIN } },
+    });
+    return availCount.length;
+  } else if (userType === TYPE_SUBADMIN) {
+    const availCount = await UserModel.findAll({
+      where: { userSubAdminID: userID, userType: TYPE_MASTER },
+    });
+    return availCount.length;
+  } else if (userType === TYPE_MASTER) {
+    const availCount = await UserModel.findAll({
+      where: { userMasterID: userID, userType: TYPE_RETAILER },
+    });
+    console.log("availCount:", availCount);
+    return availCount.length;
+  }
+  return 0;
+};
 
-const loginUser = async (userName, userPass) => {
+const loginUser = async (userLoginID, userPass) => {
   try {
-    const userCred = await UserModel.findOne({ where: { userName } });
+    const userCred = await UserModel.findOne({ where: { userLoginID } });
     if (userCred) {
       const loginAllowed = await validateUser(userPass, userCred.userPassHash);
       if (!loginAllowed) {
@@ -96,4 +141,5 @@ module.exports = {
   updateUser,
   loginUser,
   userPinUpdate,
+  getAvailableUser,
 };
