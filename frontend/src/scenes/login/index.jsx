@@ -1,42 +1,50 @@
 import React, { useState, useEffect } from "react";
-import "../../index.css";
 import axios from "axios";
+import Cookies from "universal-cookie";
 import { BACKEND_URI } from "../../constants";
 import { useNavigate } from "react-router-dom";
-
+import { useAddLoginMutation } from "../../state/api";
 const Login = () => {
   const navigate = useNavigate();
   const [auth, setAuth] = useState(false);
   const [token, setToken] = useState(false);
+  const cookies = new Cookies();
   useEffect(() => {
     async function getAuth() {
-      const auth = await axios.post(`${BACKEND_URI}/users/auth`, null, {
-        withCredentials: true,
-      });
-      if (auth.data.token) {
-        setToken(auth.data.token);
-        navigate("/dashboard");
-      }
+      try {
+        const auth = await axios.get(`${BACKEND_URI}/users/auth`, null, {
+          withCredentials: true,
+        });
+        console.log("auth:", auth);
+        if (auth.data.token) {
+          setToken(auth.data.token);
+          navigate("/dashboard");
+        }
+      } catch (error) {}
     }
-    getAuth();
+    // getAuth();
   }, []);
   const [values, setValues] = useState({
-    userName: "",
+    userLoginID: "",
     userPass: "",
   });
   const [errorMessage, setErrorMessage] = React.useState("");
+  // const { data, isLoading } = useAddLoginMutation(values, { skip: true });
+
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!values.userName || !values.userPass) {
-      return setErrorMessage("Empty Username or Password");
+    if (!values.userLoginID || !values.userPass) {
+      return setErrorMessage("Empty userLoginID or Password");
     }
     try {
-      const response = await axios.post(`${BACKEND_URI}/users/login`, values, {
+      const response = await axios.post(`${BACKEND_URI}users/login`, values, {
         withCredentials: true,
       });
       if (response && response.status === 200) {
-        console.log("response:", response);
-        navigate("/");
+        console.log("response:", response.data);
+        const token = response.data;
+        cookies.set("token", token);
+        navigate("/customers");
       }
     } catch (error) {
       console.error(error);
@@ -71,16 +79,16 @@ const Login = () => {
               </div>
             )}
             <input
-              className="text-sm w-full px-4 py-2 border border-solid border-gray-300 rounded"
+              className="text-sm w-full px-4 bg-transparent py-2 border border-solid border-gray-300 rounded"
               type="text"
               onChange={(e) => {
-                setValues({ ...values, userName: e.target.value });
+                setValues({ ...values, userLoginID: e.target.value });
                 setErrorMessage("");
               }}
               placeholder="Login ID"
             />
             <input
-              className="text-sm w-full px-4 py-2 border border-solid border-gray-300 rounded mt-4"
+              className="text-sm w-full px-4 py-2 border border-solid bg-transparent border-gray-300 rounded mt-4"
               type="password"
               onChange={(e) =>
                 setValues({ ...values, userPass: e.target.value })
@@ -89,7 +97,7 @@ const Login = () => {
             />
             <div className="text-center md:text-left">
               <button
-                className="mt-4 bg-blue-600 hover:bg-blue-700 px-4 py-2 text-white uppercase rounded text-xs tracking-wider"
+                className="mt-4 bg-indigo-800 hover:bg-blue-800 px-4 py-2 text-white uppercase rounded text-xs tracking-wider"
                 type="submit"
               >
                 Login

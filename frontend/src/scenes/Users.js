@@ -1,10 +1,7 @@
 import React, { useEffect, useState, useMemo } from "react";
 import axios from "axios";
-import { BACKEND_URI } from "../../constants";
-import { customStyles } from "../DataTables/style";
-import DataTable, { createTheme } from "react-data-table-component";
-import Menu from "../Menu/Menu";
-
+import { BACKEND_URI } from "../constants";
+import Layout from "./layout";
 const Users = () => {
   const [getUsers, setUsers] = useState();
 
@@ -59,7 +56,7 @@ const Users = () => {
   ];
   return (
     <div>
-      <Menu />
+      <Layout />
       <div className="flex content-between p-4">
         <div className="flex-auto text-2xl font-bold text-gray-700 ">
           Users List
@@ -71,11 +68,6 @@ const Users = () => {
           Add New User
         </button>
       </div>
-      <DataTable
-        columns={DTColumns}
-        data={getUsers}
-        customStyles={customStyles}
-      />
     </div>
   );
 };
