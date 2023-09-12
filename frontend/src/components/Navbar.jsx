@@ -33,8 +33,8 @@ const Navbar = ({ user, isSidebarOpen, setIsSidebarOpen }) => {
   const isOpen = Boolean(anchorEl);
   const handleClick = (event) => setAnchorEl(event.currentTarget);
   const handleClose = () => setAnchorEl(null);
-  const { token } = cookies.get("token");
-  var decodedToken = jwt_decode(token);
+  const { token } = cookies.get("token") ? cookies.get("token") : {};
+  var decodedToken = jwt_decode(token) ? jwt_decode(token) : "";
   return (
     <AppBar
       sx={{

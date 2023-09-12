@@ -10,6 +10,25 @@ const TYPE_SUBADMIN = "subadmin";
 const TYPE_ADMIN = "admin";
 const TYPE_RETAILER = "retailer";
 const TYPE_MASTER = "master";
+const error = {
+  FORBIDDEN: {
+    status: 403,
+    message: "You don't have access right for this module",
+  },
+  NOT_FOUND: { status: 404, message: "Resource not found" },
+  USER_NOT_FOUND: { status: 404, message: "User not found" },
+  CDN_ID_MISSING: { status: 403, message: "CDN Id is Missing" },
+  INCORRECT_CREDENTIALS: { status: 403, message: "Incorrect Credential" },
+  UNAUTHORIZED: { status: 401, message: { error: "Unauthorized" } },
+  ALREADY_EXISTS: { status: 409, message: "Already exists" },
+  INTERNAL_SERVER_ERROR: { status: 500, message: "Something went wrong!" },
+  MIXED_STATUS: { status: 207, message: "Partially processed request" },
+  BAD_REQUEST: { status: 400, message: "Bad Request" },
+  INCORRECT_STORE_CREDS: {
+    status: 503,
+    message: "Incorrect Store Key provided, please check permissions granted",
+  },
+};
 module.exports = {
   JWT_SECRET_KEY,
   TOKEN_HEADER_KEY,
@@ -17,6 +36,7 @@ module.exports = {
   POSTGRE_PASSWD,
   POSTGRE_UNAME,
   SALTROUNDS,
+  error,
   PORT,
   FE_URI,
   TYPE_SUBADMIN,

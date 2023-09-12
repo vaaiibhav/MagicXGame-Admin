@@ -4,7 +4,7 @@ const bodyParser = require("body-parser");
 const cors = require("cors");
 const cookieParser = require("cookie-parser");
 const routes = require("./routes");
-const { FE_URI } = require("./constants");
+const { FE_URI, errors } = require("./constants");
 const morgan = require("morgan");
 const {
   simpleConsole,
@@ -28,7 +28,15 @@ app.use(
   })
 );
 app.use("/", routes);
-
+// GLobal Error Handler
+app.use(function (err, req, res, next) {
+  console.log("Global Error", err);
+  if (err.status) res.status(err.status).send(err);
+  else
+    res
+      .status(errors.INTERNAL_SERVER_ERROR.status)
+      .send(errors.INTERNAL_SERVER_ERROR);
+});
 app.listen(Port, () => {
   successConsole(`Server Listening on ${Port}`);
 });
