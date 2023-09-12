@@ -21,10 +21,13 @@ const Customers = () => {
   // Handling Pin Button
   const [pinOpen, setPinOpen] = useState(false);
   let userCount = 0;
+  var decodedToken;
   const cookies = new Cookies();
   const { token } = cookies.get("token");
-  var decodedToken = jwt_decode(token);
-  console.log("decodedToken:asdas", decodedToken);
+  if (token) {
+    decodedToken = jwt_decode(token);
+    console.log("decodedToken:asdas", decodedToken);
+  }
   const handlePinOpen = () => {
     setPinOpen(true);
   };
@@ -35,8 +38,8 @@ const Customers = () => {
   // Handling New Customer Button
   const [addUserOpen, setUserOpen] = useState(false);
   const { data: userCounter, isLoading: userLoading } = useGetAvailUserQuery({
-    userType: decodedToken.userType,
-    userID: decodedToken.userID,
+    userType: decodedToken?.userType,
+    userID: decodedToken?.userID,
   });
   const handleUserOpen = () => {
     // trigger();
