@@ -1,7 +1,7 @@
 FROM node:16
 
 LABEL version="1.0"
-LABEL description="Docker Backend for MagicxGame Admin."
+LABEL description="Docker Frontend for MagicxGame Admin."
 LABEL maintainer = ["vaaiibhav@live.com"]
 
 WORKDIR /app
@@ -12,6 +12,6 @@ RUN npm install
 
 COPY . .
 
-EXPOSE 8000
+EXPOSE 3000
 
 CMD ["npm", "start"]

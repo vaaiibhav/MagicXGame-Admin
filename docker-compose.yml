@@ -1,0 +1,21 @@
+version: '3'
+
+services:
+  backend:
+    env_file:
+        "./backend/.env"
+    build:
+      context: ./backend
+      dockerfile: ./Dockerfile
+    image: "vaaiibhav/magicxgame-admin-backend"
+    ports:
+      - "5000:5000"
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: ./Dockerfile
+    image: "vaaiibhav/magicxgame-admin-frontend"
+    ports:
+      - "3000:3000"
+    links:
+      - "backend:be"
