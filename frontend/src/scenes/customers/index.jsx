@@ -12,12 +12,14 @@ import {
   DialogTitle,
   TextField,
 } from "@mui/material";
-import { useGetCustomersQuery, useGetAvailUserQuery } from "../../state/api";
+import {
+  useGetCustomersQuery,
+  useLazyGetAvailUserQuery,
+} from "../../state/api";
 import Header from "../../components/Header";
 import { DataGrid } from "@mui/x-data-grid";
 const Customers = () => {
   const theme = useTheme();
-  const { data, isLoading } = useGetCustomersQuery();
   // Handling Pin Button
   const [pinOpen, setPinOpen] = useState(false);
   let userCount = 0;
@@ -26,7 +28,6 @@ const Customers = () => {
   const { token } = cookies.get("token");
   if (token) {
     decodedToken = jwt_decode(token);
-    console.log("decodedToken:asdas", decodedToken);
   }
   const handlePinOpen = () => {
     setPinOpen(true);
@@ -37,12 +38,18 @@ const Customers = () => {
   };
   // Handling New Customer Button
   const [addUserOpen, setUserOpen] = useState(false);
-  const { data: userCounter, isLoading: userLoading } = useGetAvailUserQuery({
+  const { data, isLoading } = useGetCustomersQuery({
     userType: decodedToken?.userType,
     userID: decodedToken?.userID,
   });
+
+  const [trigger, { data: userCounter, isLoading: userLoading }] =
+    useLazyGetAvailUserQuery({
+      userType: decodedToken?.userType,
+      userID: decodedToken?.userID,
+    });
   const handleUserOpen = () => {
-    // trigger();
+    trigger();
     setUserOpen(true);
   };
 
@@ -61,7 +68,7 @@ const Customers = () => {
             // pinDialog(params);
           }}
         >
-          Reset Pin
+          Reset P&P
         </Button>
       </strong>
     );
@@ -181,15 +188,24 @@ const Customers = () => {
         <DialogTitle>Add New Customer</DialogTitle>
         <DialogContent>
           {userCounter?.userCount ? (
-            <DialogContentText>
-              Customer LoginID: &nbsp;
-              {userCounter?.userCount
-                ? userCounter?.userCount.toLocaleString("en-US", {
-                    minimumIntegerDigits: 2,
-                    useGrouping: false,
-                  })
-                : 0}
-            </DialogContentText>
+            <>
+              <DialogContentText className="text-green">
+                Customer LoginID: &nbsp;
+                {userCounter?.userCount
+                  ? "11" +
+                    userCounter?.userCount.toLocaleString("en-US", {
+                      minimumIntegerDigits: 2,
+                      useGrouping: false,
+                    })
+                  : 0}
+              </DialogContentText>
+              <DialogContentText className="text-green">
+                Password: 4567
+              </DialogContentText>
+              <DialogContentText className="text-green">
+                Pin: 1234
+              </DialogContentText>
+            </>
           ) : (
             <DialogContentText color={"red"}>
               There is an Error
