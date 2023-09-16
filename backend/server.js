@@ -39,5 +39,6 @@ app.use(function (err, req, res, next) {
       .send(errors.INTERNAL_SERVER_ERROR);
 });
 app.listen(Port, () => {
+  console.log(`Server Listening on ${Port}`);
   successConsole(`Server Listening on ${Port}`);
 });
