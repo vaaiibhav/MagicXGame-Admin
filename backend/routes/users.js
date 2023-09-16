@@ -119,7 +119,6 @@ router.put(
 router.get(
   "/avail/:userType/:userID",
   tryCatcher(async (req, res) => {
-    console.log("req.params:", req.params);
     const { userType, userID } = req.params;
     const userCount = await getAvailableUser(userType, userID);
     res.json({ userCount }).status(200);
@@ -134,10 +133,11 @@ router.get(
   })
 );
 router.get(
-  "/",
+  "/:userType/:userID",
   tryCatcher(async (req, res) => {
     const { limit, offset } = req.query;
-    const users = await getAllUsers(limit, offset);
+    const { userType, userID } = req.params;
+    const users = await getAllUsers(limit, offset, userType, userID);
     res.json(users).status(200);
   })
 );

@@ -17,10 +17,10 @@ export const api = createApi({
     "Dashboard",
   ],
   endpoints: (build) => ({
-    getUser: build.query({
-      query: (id) => `/users/${id}`,
-      providesTags: ["User"],
-    }),
+    // getUser: build.query({
+    //   query: (id) => `/users/${id}`,
+    //   providesTags: ["User"],
+    // }),
     addLogin: build.mutation({
       query: (body) => ({
         url: `post`,
@@ -38,7 +38,7 @@ export const api = createApi({
       providesTags: ["Products"],
     }),
     getCustomers: build.query({
-      query: () => "users",
+      query: ({ userType, userID }) => `users/${userType}/${userID}`,
       providesTags: ["Customers"],
     }),
     getTransactions: build.query({
@@ -82,6 +82,6 @@ export const {
   useGetAdminsQuery,
   useGetUserPerformanceQuery,
   useGetDashboardQuery,
-  useGetAvailUserQuery,
+  useLazyGetAvailUserQuery,
   useAddLoginMutation,
 } = api;

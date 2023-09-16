@@ -30,6 +30,7 @@ app.use(
 app.use("/", routes);
 // GLobal Error Handler
 app.use(function (err, req, res, next) {
+  console.log("requested URL", req.url);
   console.log("Global Error", err);
   if (err.status) res.status(err.status).send(err);
   else

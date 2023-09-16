@@ -13,37 +13,24 @@ const {
   TYPE_RETAILER,
   TYPE_MASTER,
 } = require("../constants");
-const getAllUsers = async (limit = 10, offset = 0) => {
-  return await UserModel.findAll({
-    offset,
-    limit,
-    attributes: [
-      "userID",
-      "userName",
-      "userPhoneNumber",
-      "userMasterID",
-      "userSubAdminID",
-      "userType",
-      "userBalance",
-      "userLoginID",
-      "userCity",
-    ],
-  });
+const getAllUsers = async (limit = 10, offset = 0, userType, userID) => {
+  if (userType === TYPE_ADMIN) {
+    return await UserModel.findAll();
+  }
+  if (userType === TYPE_SUBADMIN) {
+    return await UserModel.findAll({
+      where: { userSubAdminID: userID },
+    });
+  }
+  if (userType === TYPE_MASTER) {
+    return await UserModel.findAll({
+      where: { userMasterID: userID },
+    });
+  }
 };
 const getUserbyUserName = async (userName) => {
   return await UserModel.findOne({
     where: { userName },
-    attributes: [
-      "userID",
-      "userName",
-      "userPhoneNumber",
-      "userMasterID",
-      "userSubAdminID",
-      "userType",
-      "userBalance",
-      "userLoginID",
-      "userCity",
-    ],
   });
 };
 const getUserbyId = async (id) => {
@@ -94,10 +81,9 @@ const updateUser = async (
   );
 };
 const getAvailableUser = async (userType, userID) => {
-  console.log("userType, userID:", userType, userID);
   if (userType === TYPE_ADMIN) {
     const availCount = await UserModel.findAll({
-      where: { userType: { TYPE_SUBADMIN } },
+      where: { userType: TYPE_SUBADMIN },
     });
     return availCount.length;
   } else if (userType === TYPE_SUBADMIN) {
@@ -109,7 +95,6 @@ const getAvailableUser = async (userType, userID) => {
     const availCount = await UserModel.findAll({
       where: { userMasterID: userID, userType: TYPE_RETAILER },
     });
-    console.log("availCount:", availCount);
     return availCount.length;
   }
   return 0;
