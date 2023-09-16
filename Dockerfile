@@ -33,6 +33,10 @@ WORKDIR /app
 COPY --from=frontend-build /app/frontend/build ./frontend
 COPY --from=backend-build /app/backend ./
 
+# Copy the backend source code
+COPY package*.json ./
+COPY package-lock.json ./
+RUN npm install
 # Expose the ports
 EXPOSE 3000 8000
 
@@ -40,4 +44,4 @@ EXPOSE 3000 8000
 # RUN npm install -g some-global-dependency
 
 # Define the command to start both the frontend and backend
-CMD ["npm", "run", "start:both"]
+CMD ["npm", "run", "start"]
