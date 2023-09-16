@@ -10,9 +10,9 @@ jobs:
     runs-on: self-hosted
 
     steps:
-      - name: Pull Docker image
-        run: sudo docker pull vaaiibhav/magicxgame-admin:latest
       - name: Delete old Docker Container
         run: sudo docker rm -f magicxgame-admin-container || true
+      - name: Pull Docker image
+        run: sudo docker pull vaaiibhav/magicxgame-admin:latest
       - name: Run docker Container
         run: sudo docker run -d -p 3000:3000 --name magicxgame-admin-container vaaiibhav/magicxgame-admin
