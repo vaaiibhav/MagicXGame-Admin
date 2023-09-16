@@ -1,22 +1,43 @@
-FROM node:16
+# Stage 1: Build the React frontend
+FROM node:16 AS frontend-build
 
-LABEL version="1.0"
-LABEL description="Docker Backend for MagicxGame Admin."
-LABEL maintainer = ["vaaiibhav@live.com"]
+# Set the working directory for the frontend
+WORKDIR /app/frontend
 
+# Copy the frontend source code
+COPY frontend/package*.json ./
+COPY frontend/package-lock.json ./
+RUN npm install
+COPY frontend ./
+RUN npm run build
+
+# Stage 2: Build the Node.js backend
+FROM node:16 AS backend-build
+
+# Set the working directory for the backend
 WORKDIR /app/backend
 
-COPY ["backend/package.json", "backend/package-lock.json", "backend/"]
-RUN npm install 
+# Copy the backend source code
+COPY backend/package*.json ./
+COPY backend/package-lock.json ./
+RUN npm install
+COPY backend ./
 
-EXPOSE 8000
-RUN npm start
-WORKDIR /app/frontend
-COPY ["frontend/package.json", "frontend/package-lock.json", "frontend/"]
+# Stage 3: Combine frontend and backend into a single image
+FROM node:16
 
-RUN npm install 
+# Set the working directory for the combined app
+WORKDIR /app
 
+# Copy the built frontend and backend from previous stages
+COPY --from=frontend-build /app/frontend/build ./frontend
+COPY --from=backend-build /app/backend ./
 
-EXPOSE 3000
+# Expose the ports
+EXPOSE 3000 8000
 
-CMD ["npm", "start"]
+# Install any global dependencies or run other setup commands if needed
+# RUN npm install -g some-global-dependency
+
+# Define the command to start both the frontend and backend
+CMD ["npm", "run", "start:both"]
