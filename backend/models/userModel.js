@@ -1,7 +1,9 @@
 const { DataTypes } = require("sequelize");
+const { dangerConsole } = require("../utils/colorConsoler");
 const { sequelize } = require("../utils/dbConnection");
-
-const UserModel = sequelize.define("Users", {
+let userModel = {}
+try {
+ UserModel = sequelize.define("Users", {
   // MOdel attributes
   userID: {
     type: DataTypes.BIGINT,
@@ -21,6 +23,9 @@ const UserModel = sequelize.define("Users", {
   userMasterID: { type: DataTypes.BIGINT },
   userSubAdminID: { type: DataTypes.BIGINT },
   userLoginID: { type: DataTypes.BIGINT },
-});
+}); 
+} catch (error) {
+  dangerConsole({error})
+}
 
 module.exports = UserModel;

@@ -31,7 +31,7 @@ WORKDIR /app
 
 # Copy the built frontend and backend from previous stages
 COPY --from=frontend-build /app/frontend/build ./frontend
-COPY --from=backend-build /app/backend ./
+COPY --from=backend-build /app/backend ./backend
 
 # Copy the backend source code
 COPY package*.json ./
