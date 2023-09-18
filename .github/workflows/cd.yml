@@ -15,4 +15,4 @@ jobs:
       - name: Pull Docker image
         run: sudo docker pull vaaiibhav/magicxgame-admin:latest
       - name: Run docker Container
-        run: sudo docker run -d -p 3000:3000 -p 8000:8000 --name magicxgame-admin-container vaaiibhav/magicxgame-admin
+        run: sudo docker run -d -p 3000:3000 -p 8000:8000 --name magicxgame-admin-container vaaiibhav/magicxgame-admin  --env NRIA_LICENSE_KEY=a43d20544cc3861401aab9690a544fbcFFFFNRAL
