@@ -25,17 +25,22 @@ import {
   useTheme,
 } from "@mui/material";
 import Cookies from "universal-cookie";
+const cookies = new Cookies();
+console.log("cookies =>",cookies)
 const Navbar = ({ user, isSidebarOpen, setIsSidebarOpen }) => {
   const dispatch = useDispatch();
   const theme = useTheme();
-  const cookies = new Cookies();
   const [anchorEl, setAnchorEl] = useState(null);
   const isOpen = Boolean(anchorEl);
   const handleClick = (event) => setAnchorEl(event.currentTarget);
   const handleClose = () => setAnchorEl(null);
-  const { token } = cookies.get("token") ? cookies.get("token") : {};
-  var decodedToken = jwt_decode(token) ? jwt_decode(token) : "";
-  return (
+if(cookies){
+  const { token } = cookies.get("token") ;
+  var decodedToken;
+  if (token) {
+    decodedToken = jwt_decode(token);
+  }}  return (
+  
     <AppBar
       sx={{
         position: "static",
@@ -121,7 +126,7 @@ const Navbar = ({ user, isSidebarOpen, setIsSidebarOpen }) => {
               anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
             >
               <MenuItem onClick={handleClose}>
-                Log Out {decodedToken.userName}{" "}
+                Log Out {decodedToken?.userName}{" "}
               </MenuItem>
             </Menu>
           </FlexBetween>
