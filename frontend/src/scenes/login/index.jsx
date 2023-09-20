@@ -42,8 +42,8 @@ const Login = () => {
       });
       if (response && response.status === 200) {
         console.log("response:", response.data);
-        const token = response.data;
-        cookies.set("token", token);
+        const tokenR = response.data;
+        cookies.set("token", tokenR);
         navigate("/customers");
       }
     } catch (error) {
