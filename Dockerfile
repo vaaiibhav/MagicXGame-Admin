@@ -8,7 +8,7 @@ WORKDIR /app/frontend
 COPY frontend/package*.json ./
 COPY frontend/package-lock.json ./
 RUN npm install
-COPY frontend ./
+COPY frontend/ ./
 RUN npm run build
 
 # Stage 2: Build the Node.js backend
@@ -20,8 +20,13 @@ WORKDIR /app/backend
 # Copy the backend source code
 COPY backend/package*.json ./
 COPY backend/package-lock.json ./
-RUN npm install
-COPY backend ./
+# RUN npm install
+
+
+COPY backend/ ./
+
+# Install bcrypt with prebuilt binaries (compatible with the current architecture)
+RUN npm install bcrypt
 
 # Stage 3: Combine frontend and backend into a single image
 FROM node:16
@@ -31,17 +36,17 @@ WORKDIR /app
 
 # Copy the built frontend and backend from previous stages
 COPY --from=frontend-build /app/frontend/build ./frontend
-COPY --from=backend-build /app/backend ./
+COPY --from=backend-build /app/backend ./backend
 
-# Copy the backend source code
+# Copy the root-level package files
 COPY package*.json ./
 COPY package-lock.json ./
-RUN npm install
+
+# Install production dependencies (remove development dependencies)
+RUN npm install 
+
 # Expose the ports
 EXPOSE 3000 8000
-
-# Install any global dependencies or run other setup commands if needed
-# RUN npm install -g some-global-dependency
 
 # Define the command to start both the frontend and backend
 CMD ["npm", "run", "start"]
