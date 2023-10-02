@@ -18,6 +18,8 @@ import Admin from "./scenes/admin";
 import Performance from "./scenes/performance";
 import Users from "./scenes/Users";
 import Login from "./scenes/login";
+import Logout from "./scenes/Logout";
+import NoPage from "./scenes/noPage";
 
 function App() {
   const mode = useSelector((state) => state.global.mode);
@@ -28,9 +30,9 @@ function App() {
         <ThemeProvider theme={theme}>
           <CssBaseline />
           <Routes>
-            <Route path="/login" element={<Login />} />
+            <Route path="/login" index element={<Login />} />
             <Route element={<Layout />}>
-              <Route path="/" element={<Navigate to="/dashboard" replace />} />
+              <Route path="/" element={<Navigate to="/login" replace />} />
               <Route path="/dashboard" element={<Dashboard />} />
               <Route path="/products" element={<Products />} />
               <Route path="/customers" element={<Customers />} />
@@ -43,7 +45,9 @@ function App() {
               <Route path="/admin" element={<Admin />} />
               <Route path="/performance" element={<Performance />} />
               <Route path="/users" element={<Users />} />
+              <Route path="/logout" element={<Logout />} />
             </Route>
+            <Route path="*" element={<NoPage />} />
           </Routes>
         </ThemeProvider>
       </BrowserRouter>

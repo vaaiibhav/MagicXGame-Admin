@@ -52,7 +52,8 @@ const createUser = async (
     userCity,
     userPassHash: "",
     userType: "retailer",
-    userBalanceHash: 0,
+    userBalance: 0,
+    userAvailableBalance: 0,
     userPhoneNumber,
     userPercentage,
   });

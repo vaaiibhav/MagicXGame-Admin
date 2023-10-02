@@ -6,7 +6,7 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node -r newrelic server.js NEW_RELIC_APP_NAME=gudGudiAdminPanelnService NEW_RELIC_LICENSE_KEY=cc7a903d1be60bda941cafc44b1fe452FFFFNRAL ",
-    "start-devServer": "nodemon --inspect ./server.js"
+    "startDev": "nodemon --inspect ./server.js"
   },
   "repository": {
     "type": "git",

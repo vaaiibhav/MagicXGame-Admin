@@ -30,35 +30,6 @@ router.post(
   })
 );
 
-router.post(
-  "/login",
-  tryCatcher(async (req, res) => {
-    const { userLoginID, userPass } = req.body;
-    if (!userLoginID || !userPass) {
-      return res.status(401).json({ error: "Empty Credentials" });
-    }
-    const user = await loginUser(userLoginID, userPass);
-    if (!user) {
-      return res.status(409).json({ error: "Password Invalid" });
-    }
-    res.status(200).json({ token: user });
-  })
-);
-
-router.get(
-  "/logout",
-  tryCatcher(async (req, res) => {
-    res.status(200).clearCookie("token").json({ message: "success" });
-  })
-);
-
-router.get(
-  "/auth",
-  validateToken,
-  tryCatcher(async (req, res) => {
-    res.json({ message: "token", token: req.token });
-  })
-);
 router.delete(
   "/id/:id",
   tryCatcher(async (req, res) => {
@@ -78,8 +49,15 @@ router.get(
 router.post(
   "/",
   tryCatcher(async (req, res) => {
-    const { userName, userCity, userType, userPhoneNumber, userPercentage } =
-      req.body;
+    const {
+      userName,
+      userCity,
+      userType,
+      userPhoneNumber,
+      userPercentage,
+      token,
+    } = req.body;
+    console.log("req.body:", req.body);
     if (
       !userName ||
       !userCity ||
@@ -128,6 +106,7 @@ router.get(
   "/user/:userName",
   tryCatcher(async (req, res) => {
     const { userName } = req.params;
+    console.log(" req.params:", req.params);
     const user = await getUserbyUserName(userName);
     res.json({ user }).status(200);
   })

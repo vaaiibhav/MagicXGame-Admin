@@ -15,7 +15,6 @@ const Login = () => {
         const auth = await axios.get(`${BACKEND_URI}/users/auth`, null, {
           withCredentials: true,
         });
-        console.log("auth:", auth);
         if (auth.data.token) {
           setToken(auth.data.token);
           navigate("/dashboard");
@@ -37,11 +36,11 @@ const Login = () => {
       return setErrorMessage("Empty userLoginID or Password");
     }
     try {
-      const response = await axios.post(`${BACKEND_URI}users/login`, values, {
+      const response = await axios.post(`${BACKEND_URI}login`, values, {
         withCredentials: true,
       });
       if (response && response.status === 200) {
-        console.log("response:", response.data);
+        console.log("response:", response);
         const tokenR = response.data;
         cookies.set("token", tokenR);
         navigate("/customers");

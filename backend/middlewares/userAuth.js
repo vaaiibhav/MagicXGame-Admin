@@ -15,7 +15,7 @@ const generateToken = (data) => {
 
 const validateToken = (req, res, next) => {
   try {
-    const token = req.cookies.token;
+    const token = req.cookie.token;
     if (!token) {
       return res.json({ error: "No Token" });
     }
