@@ -1,6 +1,5 @@
 import React, { useState, useLazyQuery } from "react";
-import Cookies from "universal-cookie";
-import jwt_decode from "jwt-decode";
+import { useSelector } from "react-redux";
 import {
   Box,
   Button,
@@ -12,23 +11,16 @@ import {
   DialogTitle,
   TextField,
 } from "@mui/material";
-import {
-  useGetCustomersQuery,
-  useLazyGetAvailUserQuery,
-} from "../../state/api";
+import { useGetCustomersQuery, useGetAvailUserQuery } from "../../state/api";
 import Header from "../../components/Header";
 import { DataGrid } from "@mui/x-data-grid";
+import jwtDecode from "jwt-decode";
 const Customers = () => {
   const theme = useTheme();
   // Handling Pin Button
   const [pinOpen, setPinOpen] = useState(false);
-  let userCount = 0;
-  var decodedToken;
-  const cookies = new Cookies();
-  const { token } = cookies.get("token");
-  if (token) {
-    decodedToken = jwt_decode(token);
-  }
+  const token = useSelector((state) => state.global.token);
+  const decodedToken = jwtDecode(token) || {};
   const handlePinOpen = () => {
     setPinOpen(true);
   };
@@ -36,21 +28,24 @@ const Customers = () => {
   const handlePinClose = () => {
     setPinOpen(false);
   };
-  // Handling New Customer Button
-  const [addUserOpen, setUserOpen] = useState(false);
-  const { data, isLoading } = useGetCustomersQuery({
+  // displaying Existing Customers
+  const { data: usersData, isLoading: usersLoading } = useGetCustomersQuery({
     userType: decodedToken?.userType,
     userID: decodedToken?.userID,
   });
+  //  create new Customer
+  // const [addCustomer] =
+  // Handling New Customer Button
+  const [addUserOpen, setUserOpen] = useState(false);
 
-  const [trigger, { data: userCounter, isLoading: userLoading }] =
-    useLazyGetAvailUserQuery({
+  const [availUsers] = useGetAvailUserQuery();
+
+  const handleUserOpen = () => {
+    setUserOpen(true);
+    availUsers({
       userType: decodedToken?.userType,
       userID: decodedToken?.userID,
     });
-  const handleUserOpen = () => {
-    trigger();
-    setUserOpen(true);
   };
 
   const handleUserClose = () => {
@@ -187,31 +182,6 @@ const Customers = () => {
       <Dialog open={addUserOpen} onClose={handleUserClose}>
         <DialogTitle>Add New Customer</DialogTitle>
         <DialogContent>
-          {userCounter?.userCount ? (
-            <>
-              <DialogContentText className="text-green">
-                Customer LoginID: &nbsp;
-                {userCounter?.userCount
-                  ? "11" +
-                    userCounter?.userCount.toLocaleString("en-US", {
-                      minimumIntegerDigits: 2,
-                      useGrouping: false,
-                    })
-                  : 0}
-              </DialogContentText>
-              <DialogContentText className="text-green">
-                Password: 4567
-              </DialogContentText>
-              <DialogContentText className="text-green">
-                Pin: 1234
-              </DialogContentText>
-            </>
-          ) : (
-            <DialogContentText color={"red"}>
-              There is an Error
-            </DialogContentText>
-          )}
-
           <TextField
             autoFocus
             margin="dense"
@@ -242,6 +212,16 @@ const Customers = () => {
             fullWidth
             variant="filled"
           />
+          <TextField
+            autoFocus
+            margin="dense"
+            id="userPercentage"
+            name="userPercentage"
+            label="Percentage"
+            type="text"
+            fullWidth
+            variant="filled"
+          />
         </DialogContent>
         <DialogActions>
           <Button
@@ -256,7 +236,7 @@ const Customers = () => {
             variant="contained"
             color="secondary"
             size="medium"
-            disabled={!userCounter}
+            disabled={!usersData}
             onClick={handleUserCreate}
           >
             Set
@@ -292,9 +272,9 @@ const Customers = () => {
         }}
       >
         <DataGrid
-          loading={isLoading || !data}
+          loading={usersLoading || !usersData}
           getRowId={(row) => row?.userID}
-          rows={data || []}
+          rows={usersData || []}
           columns={columns}
         />
       </Box>

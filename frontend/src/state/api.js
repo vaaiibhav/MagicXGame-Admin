@@ -29,6 +29,14 @@ export const api = createApi({
       }),
       providesTags: ["Login"],
     }),
+    addCustomer: build.mutation({
+      query: (body) => ({
+        url: `post`,
+        method: "POST",
+        body,
+      }),
+      providesTags: ["Login"],
+    }),
     getAvailUser: build.query({
       query: ({ userType, userID }) => `/users/avail/${userType}/${userID}`,
       providesTags: ["AvailUser"],
@@ -82,6 +90,6 @@ export const {
   useGetAdminsQuery,
   useGetUserPerformanceQuery,
   useGetDashboardQuery,
-  useLazyGetAvailUserQuery,
+  useGetAvailUserQuery,
   useAddLoginMutation,
 } = api;

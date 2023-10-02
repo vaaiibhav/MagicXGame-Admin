@@ -9,9 +9,12 @@ import {
 } from "@mui/icons-material";
 import FlexBetween from "./FlexBetween";
 import { useDispatch } from "react-redux";
+import { useNavigate } from "react-router-dom";
 import { setMode } from "../state";
 import profileImage from "../assets/profile.jpeg";
 import jwt_decode from "jwt-decode";
+import { isObjectEmpty } from "../functions/isEmpty";
+import { setToken, clearToken } from "../state/index";
 import {
   AppBar,
   Button,
@@ -25,22 +28,33 @@ import {
   useTheme,
 } from "@mui/material";
 import Cookies from "universal-cookie";
-const cookies = new Cookies();
-console.log("cookies =>",cookies)
+const cookies = new Cookies() || {};
 const Navbar = ({ user, isSidebarOpen, setIsSidebarOpen }) => {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
   const theme = useTheme();
   const [anchorEl, setAnchorEl] = useState(null);
   const isOpen = Boolean(anchorEl);
+  var token = {};
   const handleClick = (event) => setAnchorEl(event.currentTarget);
   const handleClose = () => setAnchorEl(null);
-if(cookies){
-  const { token } = cookies.get("token") ;
-  var decodedToken;
-  if (token) {
-    decodedToken = jwt_decode(token);
-  }}  return (
-  
+  const handleLogout = () => {
+    handleClose();
+    cookies.remove("token");
+    dispatch(clearToken(token));
+    navigate("/login");
+  };
+  if (!isObjectEmpty(cookies.get("token") || {})) {
+    token = cookies.get("token").token;
+    dispatch(setToken(token));
+    if (token) {
+      var decodedToken;
+      decodedToken = jwt_decode(token);
+    }
+  } else {
+    navigate("/login");
+  }
+  return (
     <AppBar
       sx={{
         position: "static",
@@ -125,7 +139,7 @@ if(cookies){
               onClose={handleClose}
               anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
             >
-              <MenuItem onClick={handleClose}>
+              <MenuItem onClick={handleLogout}>
                 Log Out {decodedToken?.userName}{" "}
               </MenuItem>
             </Menu>
