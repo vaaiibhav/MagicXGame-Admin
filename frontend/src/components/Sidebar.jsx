@@ -27,6 +27,7 @@ import {
   AdminPanelSettingsOutlined,
   TrendingUpOutlined,
   PieChartOutlined,
+  CircleNotificationsOutlined,
 } from "@mui/icons-material";
 import { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
@@ -37,6 +38,10 @@ const navItems = [
   {
     text: "Dashboard",
     icon: <HomeOutlined />,
+  },
+  {
+    text: "Notifications",
+    icon: <CircleNotificationsOutlined />,
   },
   {
     text: "Admin Side",
@@ -56,19 +61,48 @@ const navItems = [
     icon: <PublicOutlined />,
   },
   {
+    text: "Requests",
+    icon: <Groups2Outlined />,
+  },
+  {
     text: "Game Results",
     icon: null,
   },
   {
-    text: "GudiGudi",
+    text: "Jandi Munda",
     icon: <PointOfSaleOutlined />,
   },
   {
-    text: "Rush",
+    text: "Fighter Wheel",
     icon: <PointOfSaleOutlined />,
   },
   {
-    text: "Slot",
+    text: "Fighter Wheel 95",
+    icon: <PointOfSaleOutlined />,
+  },
+  {
+    text: "Lucky Card",
+    icon: <PointOfSaleOutlined />,
+  },
+
+  {
+    text: "American Roulette",
+    icon: <PointOfSaleOutlined />,
+  },
+  {
+    text: "European Roulette",
+    icon: <PointOfSaleOutlined />,
+  },
+  {
+    text: "Rummy",
+    icon: <PointOfSaleOutlined />,
+  },
+  {
+    text: "3 Patti",
+    icon: <PointOfSaleOutlined />,
+  },
+  {
+    text: "Luddo",
     icon: <PointOfSaleOutlined />,
   },
   {
@@ -96,7 +130,7 @@ const navItems = [
     icon: null,
   },
   {
-    text: "Admin",
+    text: "Profile",
     icon: <AdminPanelSettingsOutlined />,
   },
   {

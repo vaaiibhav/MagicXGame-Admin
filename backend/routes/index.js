@@ -6,11 +6,13 @@ const userRoute = require("./users");
 router.use("/users", userRoute);
 const loginRoute = require("./login");
 router.use("/login", loginRoute);
+const notificationsRoute = require("./notifications");
+router.use("/notifications", notificationsRoute);
 
 router.get(
   "/",
   tryCatcher(async (req, res) => {
-    res.json("Welcome Home!");
+    res.send("Welcome Home!");
   })
 );
 

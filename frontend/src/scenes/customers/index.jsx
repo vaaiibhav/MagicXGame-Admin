@@ -1,5 +1,6 @@
-import React, { useState, useLazyQuery } from "react";
+import React, { useState } from "react";
 import { useSelector } from "react-redux";
+import { Toaster, toast } from "sonner";
 import {
   Box,
   Button,
@@ -11,47 +12,37 @@ import {
   DialogTitle,
   TextField,
 } from "@mui/material";
-import { useGetCustomersQuery, useGetAvailUserQuery } from "../../state/api";
+import copy from "copy-to-clipboard";
+import { useGetCustomersQuery } from "../../state/api";
 import Header from "../../components/Header";
 import { DataGrid } from "@mui/x-data-grid";
+import CreateUser from "./CreateUser";
+import ResetPinPass from "./ResetPinPass";
+import EditUser from "./EditUser";
 import jwtDecode from "jwt-decode";
 const Customers = () => {
   const theme = useTheme();
-  // Handling Pin Button
-  const [pinOpen, setPinOpen] = useState(false);
-  const token = useSelector((state) => state.global.token);
+  const token = useSelector((state) => state?.global?.token);
   const decodedToken = jwtDecode(token) || {};
-  const handlePinOpen = () => {
-    setPinOpen(true);
-  };
-  const handleUserCreate = () => {};
-  const handlePinClose = () => {
-    setPinOpen(false);
-  };
+
   // displaying Existing Customers
   const { data: usersData, isLoading: usersLoading } = useGetCustomersQuery({
     userType: decodedToken?.userType,
-    userID: decodedToken?.userID,
+    userLoginID: decodedToken?.userLoginID,
   });
-  //  create new Customer
-  // const [addCustomer] =
-  // Handling New Customer Button
-  const [addUserOpen, setUserOpen] = useState(false);
-
-  const [availUsers] = useGetAvailUserQuery();
-
-  const handleUserOpen = () => {
-    setUserOpen(true);
-    availUsers({
-      userType: decodedToken?.userType,
-      userID: decodedToken?.userID,
-    });
+  // Handling Pin Button
+  const [pinOpen, setPinOpen] = useState(false);
+  const [editUserOpen, setEditUserOpen] = useState(false);
+  const handleEditUser = () => {
+    console.log("editUserOpen:", editUserOpen);
+    setEditUserOpen(editUserOpen ? false : true);
+  };
+  const handlePinOpen = () => {
+    console.log("pinOpen:", pinOpen);
+    setPinOpen(pinOpen ? false : true);
   };
 
-  const handleUserClose = () => {
-    setUserOpen(false);
-  };
-  const renderDetailsButton = (params) => {
+  const resetPinButton = (params) => {
     return (
       <strong>
         <Button
@@ -68,7 +59,24 @@ const Customers = () => {
       </strong>
     );
   };
-  const pinDialog = (params) => {};
+  const editUserButton = (params) => {
+    return (
+      <strong>
+        <Button
+          variant="contained"
+          color="secondary"
+          size="small"
+          onClick={() => {
+            handleEditUser();
+            // pinDialog(params);
+          }}
+        >
+          Edit{" "}
+        </Button>
+      </strong>
+    );
+  };
+
   const columns = [
     {
       field: "userLoginID",
@@ -86,15 +94,26 @@ const Customers = () => {
       flex: 0.6,
     },
     {
+      field: "userAvailableBalance",
+      headerName: "Avail Balance",
+      flex: 0.6,
+    },
+    {
       field: "userType",
       headerName: "Role",
       flex: 0.5,
     },
     {
+      field: "userEdit",
+      headerName: "User",
+      renderCell: editUserButton,
+      flex: 0.4,
+    },
+    {
       field: "setPin",
-      headerName: "SetPin",
-      renderCell: renderDetailsButton,
-      flex: 0.5,
+      headerName: "Reset Pin&Pass",
+      renderCell: resetPinButton,
+      flex: 0.4,
     },
     {
       field: "userPhoneNumber",
@@ -112,161 +131,58 @@ const Customers = () => {
     {
       field: "userMasterID",
       headerName: "Master ID",
-      flex: 0.4,
+      flex: 0.2,
     },
     {
       field: "userSubAdminID",
       headerName: "SubAdmin ID",
-      flex: 0.4,
+      flex: 0.2,
+    },
+    {
+      field: "createdAt",
+      headerName: "Created On",
+      flex: 0.7,
+      valueFormatter: (params) => new Date(params?.value).toLocaleString(),
     },
   ];
-
   return (
     <Box m="1.5rem 2.5rem">
       <Header title="CUSTOMERS" subtitle="List of Customers" />
 
-      <Dialog open={pinOpen} onClose={handlePinClose}>
-        <DialogTitle>Customer Pin and Password</DialogTitle>
-        <DialogContent>
-          <DialogContentText></DialogContentText>
-          <TextField
-            autoFocus
-            margin="dense"
-            id="password"
-            name="password"
-            label="Password"
-            type="password"
-            fullWidth
-            variant="standard"
-          />
-          <TextField
-            autoFocus
-            margin="dense"
-            id="pin"
-            name="pin"
-            label="PIN"
-            type="password"
-            fullWidth
-            variant="standard"
-          />
-        </DialogContent>
-        <DialogActions>
-          <Button
-            variant="outlined"
-            color="secondary"
-            size="medium"
-            onClick={handlePinClose}
-          >
-            Cancel
-          </Button>
-          <Button
-            variant="contained"
-            color="secondary"
-            size="medium"
-            onClick={handlePinClose}
-          >
-            Set
-          </Button>
-        </DialogActions>
-      </Dialog>
-      <div className="m-3 ">
-        <Button
-          variant="contained"
-          color="secondary"
-          onClick={handleUserOpen}
-          size="large"
-        >
-          Add Customer
-        </Button>
-      </div>
-      <Dialog open={addUserOpen} onClose={handleUserClose}>
-        <DialogTitle>Add New Customer</DialogTitle>
-        <DialogContent>
-          <TextField
-            autoFocus
-            margin="dense"
-            id="userName"
-            name="userName"
-            label="Name"
-            type="text"
-            fullWidth
-            variant="filled"
-          />
-          <TextField
-            autoFocus
-            margin="dense"
-            id="userCity"
-            name="userCity"
-            label="City"
-            type="text"
-            fullWidth
-            variant="filled"
-          />
-          <TextField
-            autoFocus
-            margin="dense"
-            id="userPhoneNumber"
-            name="userPhoneNumber"
-            label="Phone Number"
-            type="text"
-            fullWidth
-            variant="filled"
-          />
-          <TextField
-            autoFocus
-            margin="dense"
-            id="userPercentage"
-            name="userPercentage"
-            label="Percentage"
-            type="text"
-            fullWidth
-            variant="filled"
-          />
-        </DialogContent>
-        <DialogActions>
-          <Button
-            variant="outlined"
-            color="secondary"
-            size="medium"
-            onClick={handleUserClose}
-          >
-            Cancel
-          </Button>
-          <Button
-            variant="contained"
-            color="secondary"
-            size="medium"
-            disabled={!usersData}
-            onClick={handleUserCreate}
-          >
-            Set
-          </Button>
-        </DialogActions>
-      </Dialog>
+      <CreateUser />
+      <ResetPinPass pinOpen={pinOpen} />
+      <EditUser editUserOpen={editUserOpen} />
+      {/* Display Users Start */}
       <Box
         mt="40px"
         height="75vh"
         sx={{
           "& .MuiDataGrid-root": {
             border: "none",
+            overflow: "auto",
           },
           "& .MuiDataGrid-cell": {
             borderBottom: "none",
+            overflow: "auto",
           },
           "& .MuiDataGrid-columnHeaders": {
             backgroundColor: theme.palette.background.alt,
             color: theme.palette.secondary[100],
             borderBottom: "none",
+            overflow: "auto",
           },
           "& .MuiDataGrid-virtualScroller": {
             backgroundColor: theme.palette.primary.light,
+            overflow: "auto",
           },
           "& .MuiDataGrid-footerContainer": {
             backgroundColor: theme.palette.background.alt,
             color: theme.palette.secondary[100],
             borderTop: "none",
+            overflow: "auto",
           },
           "& .MuiDataGrid-toolbarContainer .MuiButton-text": {
+            overflow: "auto",
             color: `${theme.palette.secondary[200]} !important`,
           },
         }}
@@ -278,6 +194,7 @@ const Customers = () => {
           columns={columns}
         />
       </Box>
+      {/* Display Users End*/}
     </Box>
   );
 };
