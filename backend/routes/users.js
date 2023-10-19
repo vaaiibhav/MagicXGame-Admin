@@ -9,7 +9,6 @@ const {
   updateUser,
   loginUser,
   userPinUpdate,
-  getAvailableUser,
 } = require("../controllers/userController");
 
 const {
@@ -48,33 +47,43 @@ router.get(
 );
 router.post(
   "/",
+  validateToken,
   tryCatcher(async (req, res) => {
     const {
+      userID,
       userName,
       userCity,
       userType,
       userPhoneNumber,
-      userPercentage,
-      token,
+      userSubAdminPercentage,
+      userMasterPercentage,
+      userMasterID,
+      userSubAdminID,
+      userLoginID,
     } = req.body;
-    console.log("req.body:", req.body);
     if (
       !userName ||
+      !userID ||
       !userCity ||
       !userType ||
       !userPhoneNumber ||
-      !userPercentage
+      !userLoginID
     ) {
       return res.json({ error: "Missing Data" }).status(500);
     }
-    const user = await createUser(
+    const { user, password, pin } = await createUser(
+      userID,
       userName,
       userCity,
       userType,
       userPhoneNumber,
-      userPercentage
+      userSubAdminPercentage,
+      userMasterPercentage,
+      userLoginID,
+      userMasterID,
+      userSubAdminID
     );
-    res.json({ user }).status(200);
+    res.json({ ...user.dataValues, password, pin }).status(200);
   })
 );
 
@@ -95,28 +104,20 @@ router.put(
 );
 
 router.get(
-  "/avail/:userType/:userID",
-  tryCatcher(async (req, res) => {
-    const { userType, userID } = req.params;
-    const userCount = await getAvailableUser(userType, userID);
-    res.json({ userCount }).status(200);
-  })
-);
-router.get(
   "/user/:userName",
   tryCatcher(async (req, res) => {
     const { userName } = req.params;
-    console.log(" req.params:", req.params);
     const user = await getUserbyUserName(userName);
     res.json({ user }).status(200);
   })
 );
 router.get(
-  "/:userType/:userID",
+  "/:userType/:userLoginID",
+  validateToken,
   tryCatcher(async (req, res) => {
     const { limit, offset } = req.query;
-    const { userType, userID } = req.params;
-    const users = await getAllUsers(limit, offset, userType, userID);
+    const { userType, userLoginID } = req.params;
+    const users = await getAllUsers(limit, offset, userType, userLoginID);
     res.json(users).status(200);
   })
 );

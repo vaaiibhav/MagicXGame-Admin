@@ -14,12 +14,12 @@ import Overview from "./scenes/overview";
 import Daily from "./scenes/daily";
 import Weekly from "./scenes/weekly";
 import Breakdown from "./scenes/breakdown";
-import Admin from "./scenes/admin";
+import Profile from "./scenes/profile";
 import Performance from "./scenes/performance";
-import Users from "./scenes/Users";
 import Login from "./scenes/login";
 import Logout from "./scenes/Logout";
 import NoPage from "./scenes/noPage";
+import Notifications from "./scenes/notifications";
 
 function App() {
   const mode = useSelector((state) => state.global.mode);
@@ -42,10 +42,10 @@ function App() {
               <Route path="/daily" element={<Daily />} />
               <Route path="/weekly" element={<Weekly />} />
               <Route path="/breakdown" element={<Breakdown />} />
-              <Route path="/admin" element={<Admin />} />
+              <Route path="/profile" element={<Profile />} />
               <Route path="/performance" element={<Performance />} />
-              <Route path="/users" element={<Users />} />
               <Route path="/logout" element={<Logout />} />
+              <Route path="/notifications" element={<Notifications />} />
             </Route>
             <Route path="*" element={<NoPage />} />
           </Routes>

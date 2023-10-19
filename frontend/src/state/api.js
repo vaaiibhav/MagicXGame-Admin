@@ -1,7 +1,7 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import { BACKEND_URI } from "../Utils/constants";
 export const api = createApi({
-  baseQuery: fetchBaseQuery({ baseUrl: BACKEND_URI }),
+  baseQuery: fetchBaseQuery({ baseUrl: BACKEND_URI, credentials: "include" }),
   reducerPath: "adminApi",
   tagTypes: [
     "User",
@@ -15,15 +15,12 @@ export const api = createApi({
     "Admins",
     "Performance",
     "Dashboard",
+    "Notifications",
   ],
   endpoints: (build) => ({
-    // getUser: build.query({
-    //   query: (id) => `/users/${id}`,
-    //   providesTags: ["User"],
-    // }),
     addLogin: build.mutation({
       query: (body) => ({
-        url: `post`,
+        url: `login/`,
         method: "POST",
         body,
       }),
@@ -31,23 +28,46 @@ export const api = createApi({
     }),
     addCustomer: build.mutation({
       query: (body) => ({
-        url: `post`,
+        url: `users/`,
         method: "POST",
         body,
       }),
-      providesTags: ["Login"],
+      providesTags: ["addCustomer"],
     }),
-    getAvailUser: build.query({
-      query: ({ userType, userID }) => `/users/avail/${userType}/${userID}`,
-      providesTags: ["AvailUser"],
+    editCustomer: build.mutation({
+      query: (body) => ({
+        url: `users/`,
+        method: "UPDATE",
+        body,
+      }),
+      providesTags: ["addCustomer"],
+    }),
+    getNotifications: build.query({
+      query: () => `notifications/`,
+      providesTags: ["Notifications"],
+    }),
+    addNotification: build.mutation({
+      query: (body) => ({
+        url: `notifications/`,
+        method: "POST",
+        body,
+      }),
+      invalidatesTags: ["Notifications"],
+    }),
+    deleteNotification: build.mutation({
+      query: (notificationID) => ({
+        url: `notifications/${notificationID}`,
+        method: "DELETE",
+      }),
+      invalidatesTags: ["Notifications"],
     }),
     getProducts: build.query({
       query: () => "client/products",
       providesTags: ["Products"],
     }),
     getCustomers: build.query({
-      query: ({ userType, userID }) => `users/${userType}/${userID}`,
-      providesTags: ["Customers"],
+      query: ({ userType, userLoginID }) => `users/${userType}/${userLoginID}`,
+      invalidatesTags: ["Customers"],
     }),
     getTransactions: build.query({
       query: ({ page, pageSize, sort, search }) => ({
@@ -81,8 +101,11 @@ export const api = createApi({
 });
 
 export const {
-  useGetUserQuery,
+  useEditCustomerMutation,
   useGetProductsQuery,
+  useGetNotificationsQuery,
+  useAddNotificationMutation,
+  useDeleteNotificationMutation,
   useGetCustomersQuery,
   useGetTransactionsQuery,
   useGetGeographyQuery,
@@ -90,6 +113,6 @@ export const {
   useGetAdminsQuery,
   useGetUserPerformanceQuery,
   useGetDashboardQuery,
-  useGetAvailUserQuery,
+  useAddCustomerMutation,
   useAddLoginMutation,
 } = api;

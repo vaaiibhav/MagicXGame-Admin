@@ -6,23 +6,24 @@ import { useNavigate } from "react-router-dom";
 import { useAddLoginMutation } from "../../state/api";
 const Login = () => {
   const navigate = useNavigate();
-  const [auth, setAuth] = useState(false);
   const [token, setToken] = useState(false);
   const cookies = new Cookies();
-  useEffect(() => {
-    async function getAuth() {
-      try {
-        const auth = await axios.get(`${BACKEND_URI}/users/auth`, null, {
-          withCredentials: true,
-        });
-        if (auth.data.token) {
-          setToken(auth.data.token);
-          navigate("/dashboard");
-        }
-      } catch (error) {}
-    }
-    // getAuth();
-  }, []);
+  // useEffect(() => {
+  //   async function getAuth() {
+  //     try {
+  //       const auth = await axios.get(`${BACKEND_URI}/users/auth`, null, {
+  //         withCredentials: true,
+  //       });
+  //       if (auth.data.token) {
+  //         setToken(auth.data.token);
+  //         navigate("/dashboard");
+  //       }
+  //     } catch (error) {}
+  //   }
+  //   // getAuth();
+  // }, []);
+  const [userLoginer] = useAddLoginMutation();
+
   const [values, setValues] = useState({
     userLoginID: "",
     userPass: "",
@@ -35,21 +36,10 @@ const Login = () => {
     if (!values.userLoginID || !values.userPass) {
       return setErrorMessage("Empty userLoginID or Password");
     }
-    try {
-      const response = await axios.post(`${BACKEND_URI}login`, values, {
-        withCredentials: true,
-      });
-      if (response && response.status === 200) {
-        console.log("response:", response);
-        const tokenR = response.data;
-        cookies.set("token", tokenR);
-        navigate("/customers");
-      }
-    } catch (error) {
-      console.error(error);
-      setErrorMessage(
-        error.status !== 401 ? "Invalid Credentials" : error.message
-      );
+    const userLoginResponse = await userLoginer(values);
+    if (userLoginResponse?.data?.token) {
+      cookies.set("token", userLoginResponse?.data?.token);
+      navigate("/dashboard");
     }
   };
   return (

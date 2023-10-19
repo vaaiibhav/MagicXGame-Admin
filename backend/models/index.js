@@ -1,4 +1,6 @@
 exports.UserModel = require("./userModel");
-exports.UserLocation = require("./userLocation");
+exports.UserLocatioModel = require("./userLocatioModel");
+exports.NotificationModel = require("./notificationModel");
+exports.TransactionsModel = require("./transactionsModel");
 // console.log("indexModel :", { userModel, UserLocation });
 // exports = { userModel, UserLocation };

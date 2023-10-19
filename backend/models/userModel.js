@@ -17,11 +17,13 @@ const UserModel = sequelize.define("Users", {
   userBalance: { type: DataTypes.BIGINT(0), allowNull: false },
   userAvailableBalance: { type: DataTypes.BIGINT(0), allowNull: false },
   userPhoneNumber: { type: DataTypes.TEXT },
-  userPercentage: { type: DataTypes.TEXT },
+  userSubAdminPercentage: { type: DataTypes.TEXT },
+  userMasterPercentage: { type: DataTypes.TEXT },
   userPinHash: { type: DataTypes.TEXT },
-  userMasterID: { type: DataTypes.BIGINT },
-  userSubAdminID: { type: DataTypes.BIGINT },
-  userLoginID: { type: DataTypes.BIGINT },
+  userMasterID: { type: DataTypes.TEXT },
+  userSubAdminID: { type: DataTypes.TEXT },
+  userLoginID: { type: DataTypes.TEXT },
+  userAllowed: { type: DataTypes.BOOLEAN, defaultValue: true },
 });
-
+// UserModel.sync({ alter: true });
 module.exports = UserModel;

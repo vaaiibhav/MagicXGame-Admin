@@ -45,7 +45,11 @@ const Navbar = ({ user, isSidebarOpen, setIsSidebarOpen }) => {
     navigate("/login");
   };
   if (!isObjectEmpty(cookies.get("token") || {})) {
-    token = cookies.get("token").token;
+    try {
+      token = cookies.get("token");
+    } catch (error) {
+      console.log("error:", error);
+    }
     dispatch(setToken(token));
     if (token) {
       var decodedToken;

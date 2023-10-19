@@ -7,6 +7,8 @@ const {
 } = require("../constants");
 
 const generateToken = (data) => {
+  delete data.dataValues.userPassHash;
+  delete data.dataValues.userPinHash;
   const token = jwt.sign(data.dataValues, JWT_SECRET_KEY, {
     expiresIn: "1d",
   });
@@ -15,13 +17,13 @@ const generateToken = (data) => {
 
 const validateToken = (req, res, next) => {
   try {
-    const token = req.cookie.token;
+    const token = req.cookies.token;
     if (!token) {
       return res.json({ error: "No Token" });
     }
     const verified = jwt.verify(token, JWT_SECRET_KEY);
     if (verified) {
-      req.token = verified;
+      req.user = jwt.decode(token);
       next();
       return "success";
     } else {
@@ -46,7 +48,7 @@ const passwordHashing = async (body) => {
       return {};
     });
   const userPinHash = await bcrypt
-    .hash(pin, SALTROUNDS)
+    .hash(pin.toString(), SALTROUNDS)
     .then((pinHash) => {
       return pinHash;
     })
