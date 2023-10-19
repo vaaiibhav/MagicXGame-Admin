@@ -1,7 +1,9 @@
 const { DataTypes } = require("sequelize");
+const { dangerConsole } = require("../utils/colorConsoler");
 const { sequelize } = require("../utils/dbConnection");
-
-const UserModel = sequelize.define("Users", {
+let userModel = {}
+try {
+ UserModel = sequelize.define("Users", {
   // MOdel attributes
   userID: {
     type: DataTypes.BIGINT,

@@ -14,7 +14,8 @@ const {
   TYPE_RETAILER,
   TYPE_MASTER,
 } = require("../constants");
-const getAllUsers = async (limit = 10, offset = 0, userType, userLoginID) => {
+
+const getAllUsers = async (limit = 10, offset = 0, userType, userID) => {
   if (userType === TYPE_ADMIN) {
     return await UserModel.findAll({ order: [["userLoginID", "Desc"]] });
   }
