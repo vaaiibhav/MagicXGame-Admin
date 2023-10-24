@@ -17,6 +17,7 @@ import { useEffect } from "react";
 const EditUser = (props) => {
   const token = useSelector((state) => state?.global?.token);
   const decodedToken = jwtDecode(token) || {};
+  const [editCustomer] = useEditCustomerMutation();
   const [editUserOpen, setEditUserOpen] = useState(false);
   const [editUserData, setEditUserData] = useState({
     userName: "",
@@ -46,6 +47,7 @@ const EditUser = (props) => {
   };
   const submitEditUser = () => {
     console.log(editUserData);
+    editCustomer(editUserData);
   };
 
   return (
@@ -134,6 +136,19 @@ const EditUser = (props) => {
                   onChange={handleUserEdit}
                   name="userMasterPercentage"
                   label="Master Percentage"
+                  type="number"
+                  onKeyDown={preventMinus}
+                  fullWidth
+                  variant="filled"
+                />
+                <TextField
+                  autoFocus
+                  margin="dense"
+                  id="user"
+                  placeholder="10"
+                  onChange={handleUserEdit}
+                  name="usersAllowedUnder"
+                  label="Allowed Users"
                   type="number"
                   onKeyDown={preventMinus}
                   fullWidth

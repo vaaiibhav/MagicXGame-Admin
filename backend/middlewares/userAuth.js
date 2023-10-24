@@ -7,8 +7,10 @@ const {
 } = require("../constants");
 
 const generateToken = (data) => {
-  delete data.dataValues.userPassHash;
-  delete data.dataValues.userPinHash;
+  // delete data.dataValues.userPassHash;
+  // delete data.dataValues.userPinHash;
+  delete data.dataValues.userBalance;
+  delete data.dataValues.userAvailableBalance;
   const token = jwt.sign(data.dataValues, JWT_SECRET_KEY, {
     expiresIn: "1d",
   });
@@ -28,11 +30,13 @@ const validateToken = (req, res, next) => {
       return "success";
     } else {
       // Access Denied
+      console.log("fail:", fail);
       return "fail";
     }
   } catch (error) {
     // Access Denied
-    return "error";
+    console.log("error:", error);
+    return res.status(401).json({ error: "Token Expired" });
   }
 };
 
@@ -66,6 +70,14 @@ const validateUser = async (password, hash) => {
     })
     .catch((err) => console.error(err.message));
 };
+const validatePin = (pin, hash) => {
+  return bcrypt
+    .compare(pin, hash)
+    .then((res) => {
+      return res;
+    })
+    .catch((err) => console.error(err.message));
+};
 const compareUser = async (password) => {
   return bcrypt
     .hash(password, SALTROUNDS)
@@ -82,4 +94,5 @@ module.exports = {
   passwordHashing,
   validateUser,
   compareUser,
+  validatePin,
 };

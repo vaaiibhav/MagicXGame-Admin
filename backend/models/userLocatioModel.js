@@ -1,7 +1,7 @@
 const { DataTypes } = require("sequelize");
 const { sequelize } = require("../utils/dbConnection");
 
-const userLocatioModel = sequelize.define("UserLocation", {
+const UserLocatioModel = sequelize.define("UserLocation", {
   // MOdel attributes
   locationId: {
     type: DataTypes.BIGINT,
@@ -14,4 +14,4 @@ const userLocatioModel = sequelize.define("UserLocation", {
   locationLang: { type: DataTypes.TEXT },
 });
 
-module.exports = userLocatioModel;
+module.exports = UserLocatioModel;

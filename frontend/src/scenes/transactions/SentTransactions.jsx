@@ -5,15 +5,15 @@ import { useGetTransactionsQuery } from "../../state/api";
 import Header from "../../components/Header";
 import DataGridCustomToolbar from "../../components/DataGridCustomToolbar";
 const SentTransactions = (props) => {
-  const columns = props.columns;
+  const data = props?.sentTransactions;
+  const isLoading = props?.transactionsLoading;
+  const columns = props?.columns;
   const theme = useTheme();
-
-  const { data, isLoading } = useGetTransactionsQuery({});
 
   return (
     <>
-      <Box>
-        <Header title="TRANSFERS" subtitle="Entire list of transfers" />
+      <Box m="2rem 1rem">
+        <Header title="TRANSFER" subtitle="Entire list of Transfers" />
         <Box
           height="80vh"
           sx={{
@@ -43,10 +43,10 @@ const SentTransactions = (props) => {
         >
           <DataGrid
             loading={isLoading || !data}
-            getRowId={(row) => row._id}
-            rows={(data && data.transactions) || []}
+            getRowId={(row) => row?.transactionID}
+            rows={(data && data) || []}
             columns={columns}
-            rowCount={(data && data.total) || 0}
+            rowCount={(data && data?.count) || 0}
           />
         </Box>
       </Box>{" "}

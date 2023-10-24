@@ -2,58 +2,74 @@ import React, { useState } from "react";
 import { Box, useTheme, Button, Input, Checkbox } from "@mui/material";
 import { DataGrid } from "@mui/x-data-grid";
 import { useGetTransactionsQuery } from "../../state/api";
+import jwtDecode from "jwt-decode";
+import { useSelector } from "react-redux";
 import Header from "../../components/Header";
 import DataGridCustomToolbar from "../../components/DataGridCustomToolbar";
 import CreateTransaction from "./CreateTransaction";
 import SentTransactions from "./SentTransactions";
 import ReceiveTransactions from "./ReceiveTransactions";
+
 const Transactions = () => {
-  const theme = useTheme();
+  const { data: transactionsData, isLoading: transactionsLoading } =
+    useGetTransactionsQuery();
 
   const columns = [
     {
-      field: "_id",
+      field: "transactionID",
       headerName: "Transaction ID",
       flex: 0.5,
     },
 
     {
-      field: "userId",
-      headerName: "From UserID",
-      flex: 1,
-    },
-
-    {
-      field: "products",
-      headerName: "To UserID",
-      flex: 1,
-      renderCell: (params) => params.value.length,
+      field: "transactionFrom",
+      headerName: "From User",
+      flex: 0.8,
     },
     {
-      field: "cost",
+      field: "transactionTo",
+      headerName: "To User",
+      flex: 0.8,
+    },
+    {
+      field: "transactionAmount",
       headerName: "Amount",
-      flex: 1,
-      renderCell: (params) => `$${Number(params.value).toFixed(2)}`,
+      flex: 0.6,
     },
     {
-      field: "coasdst",
+      field: "transactionStatus",
       headerName: "Status",
-      flex: 1,
-      renderCell: (params) => `$${Number(params.value).toFixed(2)}`,
+      flex: 0.6,
     },
     {
       field: "createdAt",
-      headerName: "CreatedAt",
-      flex: 1,
+      headerName: "Date",
+      flex: 1.2,
+      valueFormatter: (params) => new Date(params?.value).toLocaleString(),
     },
+
+    // {
+    //   field: "products",
+    //   headerName: "To UserID",
+    //   flex: 1,
+    //   renderCell: (params) => params.value.length,
+    // }
   ];
 
   return (
     <Box m="1.5rem 2.5rem">
       <CreateTransaction />
       <div className="flex flex-col ">
-        <SentTransactions columns={columns} />
-        <ReceiveTransactions columns={columns} />
+        <SentTransactions
+          columns={columns}
+          sentTransactions={transactionsData?.sentTransactions}
+          transactionsLoading={false}
+        />
+        <ReceiveTransactions
+          columns={columns}
+          receivedTransactions={transactionsData?.receivedTransactions}
+          transactionsLoading={false}
+        />
       </div>
     </Box>
   );

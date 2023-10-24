@@ -1,7 +1,7 @@
 const express = require("express");
 const app = express();
-const winston = require('winston');
-const NewrelicWinston = require('newrelic-winston');
+const winston = require("winston");
+const NewrelicWinston = require("newrelic-winston");
 winston.add(new NewrelicWinston());
 const bodyParser = require("body-parser");
 const cors = require("cors");
@@ -26,10 +26,10 @@ app.use(morgan("common"));
 const logger = winston.createLogger({
   transports: [
     new winston.transports.Console({
-      handleExceptions: true
-    })
+      handleExceptions: true,
+    }),
   ],
-  exitOnError: false
+  exitOnError: false,
 });
 app.use(
   cors({

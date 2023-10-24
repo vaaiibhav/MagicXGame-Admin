@@ -5,14 +5,14 @@ import { useGetTransactionsQuery } from "../../state/api";
 import Header from "../../components/Header";
 import DataGridCustomToolbar from "../../components/DataGridCustomToolbar";
 const ReceiveTransactions = (props) => {
-  const columns = props.columns;
+  const isLoading = props?.transactionsLoading;
+  const data = props?.receivedTransactions;
+  const columns = props?.columns;
   const theme = useTheme();
-
-  const { data, isLoading } = useGetTransactionsQuery({});
 
   return (
     <>
-      <Box m="0 1rem">
+      <Box m="2rem 1rem">
         <Header title="RECEIVE" subtitle="Entire list of Recieveables" />
         <Box
           height="80vh"
@@ -43,10 +43,10 @@ const ReceiveTransactions = (props) => {
         >
           <DataGrid
             loading={isLoading || !data}
-            getRowId={(row) => row._id}
-            rows={(data && data.transactions) || []}
+            getRowId={(row) => row?.transactionID}
+            rows={(data && data) || []}
             columns={columns}
-            rowCount={(data && data.total) || 0}
+            rowCount={(data && data?.total) || 0}
           />
         </Box>
       </Box>

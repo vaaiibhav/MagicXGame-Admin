@@ -20,6 +20,7 @@ import Login from "./scenes/login";
 import Logout from "./scenes/Logout";
 import NoPage from "./scenes/noPage";
 import Notifications from "./scenes/notifications";
+import Requests from "./scenes/requests";
 
 function App() {
   const mode = useSelector((state) => state.global.mode);
@@ -45,6 +46,7 @@ function App() {
               <Route path="/profile" element={<Profile />} />
               <Route path="/performance" element={<Performance />} />
               <Route path="/logout" element={<Logout />} />
+              <Route path="/requests" element={<Requests />} />
               <Route path="/notifications" element={<Notifications />} />
             </Route>
             <Route path="*" element={<NoPage />} />

@@ -7,13 +7,13 @@ const {
   successConsole,
   darkConsole,
 } = require("../utils/colorConsoler");
+const { passwordHashing, validateToken } = require("../middlewares/userAuth");
+const tryCatcher = require("../utils/tryCatcher");
 const {
   getNotifications,
   createNotification,
   deleteNotification,
 } = require("../controllers/notificationsController");
-const { passwordHashing, validateToken } = require("../middlewares/userAuth");
-const tryCatcher = require("../utils/tryCatcher");
 router.get(
   "/",
   validateToken,
@@ -28,8 +28,8 @@ router.post(
   validateToken,
   tryCatcher(async (req, res) => {
     const { notificationText, notificationType } = req.body;
-    const create = createNotification(notificationText, notificationType);
-    res.status(200).json(create);
+    const notification = createNotification(notificationText, notificationType);
+    res.status(200).json(notification);
   })
 );
 router.delete(

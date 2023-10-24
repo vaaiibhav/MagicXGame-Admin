@@ -1,9 +1,7 @@
 const { DataTypes } = require("sequelize");
 const { dangerConsole } = require("../utils/colorConsoler");
 const { sequelize } = require("../utils/dbConnection");
-let userModel = {}
-try {
- UserModel = sequelize.define("Users", {
+let UserModel = sequelize.define("Users", {
   // MOdel attributes
   userID: {
     type: DataTypes.BIGINT,
@@ -26,6 +24,6 @@ try {
   userSubAdminID: { type: DataTypes.TEXT },
   userLoginID: { type: DataTypes.TEXT },
   userAllowed: { type: DataTypes.BOOLEAN, defaultValue: true },
+  usersAllowedUnder: { type: DataTypes.BIGINT(0), defaultValue: 10 },
 });
-// UserModel.sync({ alter: true });
 module.exports = UserModel;

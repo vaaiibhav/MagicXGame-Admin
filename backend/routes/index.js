@@ -8,6 +8,10 @@ const loginRoute = require("./login");
 router.use("/login", loginRoute);
 const notificationsRoute = require("./notifications");
 router.use("/notifications", notificationsRoute);
+const transactionsRoute = require("./transactions");
+router.use("/transactions", transactionsRoute);
+const requestsRoute = require("./requests");
+router.use("/requests", requestsRoute);
 
 router.get(
   "/",
