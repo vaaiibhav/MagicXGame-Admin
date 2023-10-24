@@ -25,11 +25,6 @@ const CreateUser = () => {
     userPhoneNumber: "",
     userSubAdminPercentage: "",
     userMasterPercentage: "",
-    userType: decodedToken.userType,
-    userSubAdminId: decodedToken.userSubAdminId,
-    userMasterId: decodedToken.userMasterId,
-    userID: decodedToken.userID,
-    userLoginID: decodedToken.userLoginID,
   });
   const handleUserCreate = (evt) => {
     const value = evt.target.value;
@@ -40,9 +35,12 @@ const CreateUser = () => {
   };
   //  create new Customer
   const [addNewUser] = useAddCustomerMutation();
-  const [copyUser, setCopyUser] = useState();
   const submitNewUser = async () => {
-    if (Object.values(newUser).includes("")) {
+    if (
+      newUserData?.userName == "" ||
+      newUserData?.userCity == "" ||
+      newUserData?.userPhoneNumber == ""
+    ) {
       return toast.error("Please Fill in all Fields");
     }
     // Api to Submit newUser

@@ -6,6 +6,7 @@ const {
   compareUser,
 } = require("../middlewares/userAuth");
 const { NotificationModel } = require("../models");
+const { Op } = require("sequelize");
 const { dangerConsole } = require("../utils/colorConsoler");
 const {
   TYPE_SUBADMIN,

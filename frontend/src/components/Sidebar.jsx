@@ -19,6 +19,7 @@ import {
   HomeOutlined,
   ShoppingCartOutlined,
   Groups2Outlined,
+  EmailOutlined,
   ReceiptLongOutlined,
   PublicOutlined,
   PointOfSaleOutlined,
@@ -62,7 +63,7 @@ const navItems = [
   },
   {
     text: "Requests",
-    icon: <Groups2Outlined />,
+    icon: <EmailOutlined />,
   },
   {
     text: "Game Results",

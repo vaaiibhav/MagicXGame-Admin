@@ -7,8 +7,8 @@ const {
   deleteUserbyId,
   createUser,
   updateUser,
-  loginUser,
   userPinUpdate,
+  getUsersBalance,
 } = require("../controllers/userController");
 
 const {
@@ -50,17 +50,14 @@ router.post(
   validateToken,
   tryCatcher(async (req, res) => {
     const {
-      userID,
       userName,
       userCity,
-      userType,
       userPhoneNumber,
       userSubAdminPercentage,
       userMasterPercentage,
-      userMasterID,
-      userSubAdminID,
-      userLoginID,
     } = req.body;
+    const { userID, userType, userMasterID, userSubAdminID, userLoginID } =
+      req.user;
     if (
       !userName ||
       !userID ||
@@ -89,20 +86,39 @@ router.post(
 
 router.put(
   "/",
+  validateToken,
   tryCatcher(async (req, res) => {
-    const { userID, userName, userCity, userPhoneNumber, userPercentage } =
-      req.body;
+    const {
+      userName,
+      userCity,
+      userPhoneNumber,
+      userSubAdminPercentage,
+      userMasterPercentage,
+      usersAllowedUnder,
+      userLoginID,
+    } = req.body;
     const user = await updateUser(
       userName,
       userCity,
       userPhoneNumber,
-      userPercentage,
-      userID
+      userSubAdminPercentage,
+      userMasterPercentage,
+      usersAllowedUnder,
+      userLoginID
     );
     res.json({ user }).status(200);
   })
 );
-
+router.get(
+  "/user-balance",
+  validateToken,
+  tryCatcher(async (req, res) => {
+    const { userLoginID } = req.user;
+    console.log("req.user:", req.user.userLoginID);
+    const userBalance = await getUsersBalance(userLoginID);
+    res.json(userBalance).status(200);
+  })
+);
 router.get(
   "/user/:userName",
   tryCatcher(async (req, res) => {
@@ -112,11 +128,11 @@ router.get(
   })
 );
 router.get(
-  "/:userType/:userLoginID",
+  "/",
   validateToken,
   tryCatcher(async (req, res) => {
     const { limit, offset } = req.query;
-    const { userType, userLoginID } = req.params;
+    const { userType, userLoginID } = req.user;
     const users = await getAllUsers(limit, offset, userType, userLoginID);
     res.json(users).status(200);
   })

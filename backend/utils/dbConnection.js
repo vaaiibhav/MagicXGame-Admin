@@ -16,7 +16,6 @@ try {
   sequelize.authenticate();
   successConsole("Connection has been established successfully.");
 } catch (error) {
-  dangerConsole("Unable to connect to the database:", error);
+  dangerConsole({ error });
 }
-
 module.exports = { sequelize };

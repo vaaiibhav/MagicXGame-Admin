@@ -13,7 +13,7 @@ import {
   TextField,
 } from "@mui/material";
 import copy from "copy-to-clipboard";
-import { useGetCustomersQuery } from "../../state/api";
+import { useEditPinMutation, useGetCustomersQuery } from "../../state/api";
 import Header from "../../components/Header";
 import { DataGrid } from "@mui/x-data-grid";
 import CreateUser from "./CreateUser";
@@ -26,20 +26,22 @@ const Customers = () => {
   const decodedToken = jwtDecode(token) || {};
 
   // displaying Existing Customers
-  const { data: usersData, isLoading: usersLoading } = useGetCustomersQuery({
-    userType: decodedToken?.userType,
-    userLoginID: decodedToken?.userLoginID,
-  });
+  const { data: usersData, isLoading: usersLoading } = useGetCustomersQuery();
+
+  const [editPin] = useEditPinMutation();
   // Handling Pin Button
   const [pinOpen, setPinOpen] = useState(false);
+  const [userPinReset, setPinReset] = useState({});
   const [editUserOpen, setEditUserOpen] = useState(false);
   const handleEditUser = () => {
-    console.log("editUserOpen:", editUserOpen);
     setEditUserOpen(editUserOpen ? false : true);
   };
   const handlePinOpen = () => {
-    console.log("pinOpen:", pinOpen);
     setPinOpen(pinOpen ? false : true);
+  };
+  const pinReset = async (params) => {
+    console.log("params:", params.row.userLoginID);
+    return await editPin({ userLoginID: params.row.userLoginID });
   };
 
   const resetPinButton = (params) => {
@@ -49,9 +51,9 @@ const Customers = () => {
           variant="contained"
           color="secondary"
           size="small"
-          onClick={() => {
+          onClick={async () => {
+            await setPinReset(await pinReset(params));
             handlePinOpen();
-            // pinDialog(params);
           }}
         >
           Reset P&P
@@ -150,7 +152,7 @@ const Customers = () => {
       <Header title="CUSTOMERS" subtitle="List of Customers" />
 
       <CreateUser />
-      <ResetPinPass pinOpen={pinOpen} />
+      <ResetPinPass userPinReset={userPinReset} pinOpen={pinOpen} />
       <EditUser editUserOpen={editUserOpen} />
       {/* Display Users Start */}
       <Box

@@ -14,11 +14,8 @@ import {
   TextField,
 } from "@mui/material";
 const ResetPinPass = (props) => {
+  console.log("props:", props);
   const [pinDialog, setPinDialog] = useState(false);
-  const [pinDialogData, setPinDialogData] = useState({
-    password: "",
-    pin: "",
-  });
 
   useEffect(() => {
     setPinDialog(props.pinOpen);
@@ -35,27 +32,20 @@ const ResetPinPass = (props) => {
       <Dialog open={pinDialog} onClose={handlePinClose}>
         <DialogTitle>Customer Pin and Password</DialogTitle>
         <DialogContent>
-          <DialogContentText></DialogContentText>
-          <TextField
-            autoFocus
-            margin="dense"
-            id="password"
-            name="password"
-            label="Password"
-            type="password"
-            fullWidth
-            variant="standard"
-          />
-          <TextField
-            autoFocus
-            margin="dense"
-            id="pin"
-            name="pin"
-            label="PIN"
-            type="password"
-            fullWidth
-            variant="standard"
-          />
+          <DialogContentText>
+            {props?.userPinReset?.data && (
+              <>
+                <div>
+                  User ID ={props?.userPinReset?.data?.userLoginID}
+                  <br></br>
+                  New Password= {props?.userPinReset?.data?.password}
+                  <br></br>
+                  New Pin = {props?.userPinReset?.data?.pin}
+                  <br></br>
+                </div>
+              </>
+            )}
+          </DialogContentText>
         </DialogContent>
         <DialogActions>
           <Button

@@ -12,6 +12,8 @@ const TransactionsModel = sequelize.define("Transactions", {
   transactionTo: { type: DataTypes.TEXT },
   transactionAmount: { type: DataTypes.TEXT },
   transactionStatus: { type: DataTypes.TEXT },
+  transactionMode: { type: DataTypes.TEXT },
+  userPreviousBalance: { type: DataTypes.TEXT },
 });
-TransactionsModel.sync({ alter: true });
+
 module.exports = TransactionsModel;

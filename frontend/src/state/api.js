@@ -10,12 +10,14 @@ export const api = createApi({
     "Products",
     "Customers",
     "Transactions",
+    "Requests",
     "Geography",
     "Sales",
     "Admins",
     "Performance",
     "Dashboard",
     "Notifications",
+    "Balance",
   ],
   endpoints: (build) => ({
     addLogin: build.mutation({
@@ -25,6 +27,7 @@ export const api = createApi({
         body,
       }),
       providesTags: ["Login"],
+      invalidatesTags: ["Balance"],
     }),
     addCustomer: build.mutation({
       query: (body) => ({
@@ -32,15 +35,23 @@ export const api = createApi({
         method: "POST",
         body,
       }),
-      providesTags: ["addCustomer"],
+      invalidatesTags: ["Customers"],
     }),
     editCustomer: build.mutation({
       query: (body) => ({
         url: `users/`,
-        method: "UPDATE",
+        method: "PUT",
         body,
       }),
-      providesTags: ["addCustomer"],
+      invalidatesTags: ["Customers"],
+    }),
+    editPin: build.mutation({
+      query: (body) => ({
+        url: `login/pin-change`,
+        method: "POST",
+        body,
+      }),
+      invalidatesTags: ["Customers"],
     }),
     getNotifications: build.query({
       query: () => `notifications/`,
@@ -66,16 +77,28 @@ export const api = createApi({
       providesTags: ["Products"],
     }),
     getCustomers: build.query({
-      query: ({ userType, userLoginID }) => `users/${userType}/${userLoginID}`,
+      query: () => `users/`,
       invalidatesTags: ["Customers"],
     }),
     getTransactions: build.query({
-      query: ({ page, pageSize, sort, search }) => ({
-        url: "client/transactions",
-        method: "GET",
-        params: { page, pageSize, sort, search },
-      }),
+      query: () => `transactions`,
       providesTags: ["Transactions"],
+    }),
+    addTransaction: build.mutation({
+      query: (body) => ({
+        url: `transactions/`,
+        method: "POST",
+        body,
+      }),
+      invalidatesTags: ["Transactions", "Balance"],
+    }),
+    getBalance: build.query({
+      query: () => "users/user-balance",
+      providesTags: ["Balance"],
+    }),
+    getRequests: build.query({
+      query: () => "requests",
+      providesTags: ["Requests"],
     }),
     getGeography: build.query({
       query: () => "client/geography",
@@ -107,7 +130,11 @@ export const {
   useAddNotificationMutation,
   useDeleteNotificationMutation,
   useGetCustomersQuery,
+  useEditPinMutation,
   useGetTransactionsQuery,
+  useAddTransactionMutation,
+  useGetBalanceQuery,
+  useGetRequestsQuery,
   useGetGeographyQuery,
   useGetSalesQuery,
   useGetAdminsQuery,

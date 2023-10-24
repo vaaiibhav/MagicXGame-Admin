@@ -1,7 +1,7 @@
 const { DataTypes } = require("sequelize");
 const { sequelize } = require("../utils/dbConnection");
 
-const NotificationModel = sequelize.define("NotificationModel", {
+const NotificationModel = sequelize.define("Notifications", {
   // MOdel attributes
   notificationID: {
     type: DataTypes.BIGINT,
@@ -13,5 +13,5 @@ const NotificationModel = sequelize.define("NotificationModel", {
   },
   notificationType: { type: DataTypes.TEXT },
 });
-NotificationModel.sync({ alter: true });
+
 module.exports = NotificationModel;

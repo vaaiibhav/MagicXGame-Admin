@@ -51,4 +51,14 @@ router.get(
     res.json({ message: "token", token: req.token });
   })
 );
+router.post(
+  "/pin-change",
+  validateToken,
+  tryCatcher(async (req, res) => {
+    console.log("req.body:", req.body);
+    if (!req.body) res.json({ error: "Error occured" }).status(500);
+    const pinPassChange = await userPinUpdate(req.body);
+    res.json(pinPassChange).status(200);
+  })
+);
 module.exports = router;

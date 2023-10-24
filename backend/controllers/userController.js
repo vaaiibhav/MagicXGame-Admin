@@ -6,7 +6,7 @@ const {
   compareUser,
 } = require("../middlewares/userAuth");
 const { UserModel, UserLocation } = require("../models");
-const { dangerConsole } = require("../utils/colorConsoler");
+const { dangerConsole, warnConsole } = require("../utils/colorConsoler");
 const { UniqueOTP, UniqueCharOTP } = require("unique-string-generator");
 const {
   TYPE_SUBADMIN,
@@ -15,7 +15,7 @@ const {
   TYPE_MASTER,
 } = require("../constants");
 
-const getAllUsers = async (limit = 10, offset = 0, userType, userID) => {
+const getAllUsers = async (limit = 10, offset = 0, userType, userLoginID) => {
   if (userType === TYPE_ADMIN) {
     return await UserModel.findAll({ order: [["userLoginID", "Desc"]] });
   }
@@ -85,8 +85,10 @@ const createUser = async (
   const userLoginID = getuserLoginID + getUserSlot;
   const password = UniqueCharOTP(6);
   const pin = UniqueOTP(4);
-  const body = { password, pin };
-  const { userPassHash, userPinHash } = await passwordHashing(body);
+  const { userPassHash, userPinHash } = await passwordHashing({
+    password,
+    pin,
+  });
   const user = await UserModel.create({
     userName,
     userCity,
@@ -105,28 +107,40 @@ const createUser = async (
   return { user, password, pin };
 };
 const userPinUpdate = async (body) => {
-  const { userID } = body;
-  const { userPassHash, userPinHash } = await passwordHashing(body);
-  return await UserModel.update(
+  const { userLoginID } = body;
+
+  const password = UniqueCharOTP(6);
+  const pin = UniqueOTP(4);
+  const { userPassHash, userPinHash } = await passwordHashing({
+    password,
+    pin,
+  });
+  const pinUser = await UserModel.update(
     { userPassHash, userPinHash },
-    { where: { userID } }
+    { where: { userLoginID } }
   );
+  console.log("pinUser:", pinUser);
+  return { userLoginID, password, pin };
 };
 const updateUser = async (
   userName,
   userCity,
   userPhoneNumber,
-  userPercentage,
-  userID
+  userSubAdminPercentage,
+  userMasterPercentage,
+  usersAllowedUnder,
+  userLoginID
 ) => {
   return await UserModel.update(
     {
       userName,
       userCity,
       userPhoneNumber,
-      userPercentage,
+      userSubAdminPercentage,
+      userMasterPercentage,
+      usersAllowedUnder,
     },
-    { where: { userID } }
+    { where: { userLoginID } }
   );
 };
 // const getAvailableUser = async (userType, userID) => {
@@ -164,9 +178,15 @@ const loginUser = async (userLoginID, userPass) => {
     }
     return userCred ? userCred : false;
   } catch (error) {
-    dangerConsole(error);
+    dangerConsole({ error });
     return error;
   }
+};
+const getUsersBalance = async (userLoginID) => {
+  return await UserModel.findOne({
+    attributes: ["userBalance", "userAvailableBalance"],
+    where: { userLoginID },
+  });
 };
 module.exports = {
   getAllUsers,
@@ -176,5 +196,6 @@ module.exports = {
   createUser,
   updateUser,
   loginUser,
+  getUsersBalance,
   userPinUpdate,
 };
