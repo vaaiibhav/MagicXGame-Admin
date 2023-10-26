@@ -41,7 +41,7 @@ const Requests = () => {
     },
     {
       field: "requestByUser",
-      headerName: "userLoginID",
+      headerName: "User Login ID",
       flex: 0.4,
     },
     {
@@ -58,7 +58,7 @@ const Requests = () => {
   ];
   return (
     <div>
-      <Box m="1.5rem 2.5rem">
+      <Box m="1.5rem 1rem">
         <Header title="Requests" subtitle="Admin Requests" />
         {decodedToken?.userType !== "admin" && <CreateRequest />}
         {/* Display Notification Starts */}

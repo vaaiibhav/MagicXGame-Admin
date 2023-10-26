@@ -37,9 +37,9 @@ const CreateUser = () => {
   const [addNewUser] = useAddCustomerMutation();
   const submitNewUser = async () => {
     if (
-      newUserData?.userName == "" ||
-      newUserData?.userCity == "" ||
-      newUserData?.userPhoneNumber == ""
+      newUserData?.userName === "" ||
+      newUserData?.userCity === "" ||
+      newUserData?.userPhoneNumber === ""
     ) {
       return toast.error("Please Fill in all Fields");
     }
@@ -130,11 +130,11 @@ const CreateUser = () => {
               label="Phone Number"
               type="number"
               fullWidth
-              onKeyDown={preventMinus}
+              // onKeyDown={preventMinus}
               onChange={handleUserCreate}
               variant="filled"
             />
-            {decodedToken.userType == "admin" && (
+            {decodedToken.userType === "admin" && (
               <>
                 <TextField
                   autoFocus
@@ -144,7 +144,7 @@ const CreateUser = () => {
                   name="userSubAdminPercentage"
                   label="Sub Admin Percentage"
                   type="number"
-                  onKeyDown={preventMinus}
+                  // onKeyDown={preventMinus}
                   fullWidth
                   variant="filled"
                 />

@@ -14,15 +14,12 @@ import {
   TextField,
 } from "@mui/material";
 const ResetPinPass = (props) => {
-  console.log("props:", props);
   const [pinDialog, setPinDialog] = useState(false);
 
   useEffect(() => {
     setPinDialog(props.pinOpen);
   }, [props.pinOpen]);
-  const pinDialogSet = () => {
-    console.log("Pin Set:", props);
-  };
+
   const handlePinClose = () => {
     setPinDialog(false);
   };
@@ -54,15 +51,7 @@ const ResetPinPass = (props) => {
             size="medium"
             onClick={handlePinClose}
           >
-            Cancel
-          </Button>
-          <Button
-            variant="contained"
-            color="secondary"
-            size="medium"
-            onClick={pinDialogSet}
-          >
-            Set
+            Close
           </Button>
         </DialogActions>
       </Dialog>

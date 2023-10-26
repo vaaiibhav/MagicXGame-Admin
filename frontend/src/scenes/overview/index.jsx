@@ -7,7 +7,7 @@ const Overview = () => {
   const [view, setView] = useState("units");
 
   return (
-    <Box m="1.5rem 2.5rem">
+    <Box m="1.5rem 1rem">
       <Header
         title="OVERVIEW"
         subtitle="Overview of general revenue and profit"

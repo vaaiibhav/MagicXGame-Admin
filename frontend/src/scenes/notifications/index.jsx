@@ -35,7 +35,6 @@ const Notifications = () => {
           color="secondary"
           size="small"
           onClick={() => {
-            console.log("params:", params.row.notificationID);
             deleteNotification(params.row.notificationID);
             // handleEditUser();
             // pinDialog(params);
@@ -80,7 +79,7 @@ const Notifications = () => {
   }
   return (
     <div>
-      <Box m="1.5rem 2.5rem">
+      <Box m="1.5rem 1rem">
         <Header title="Notifications" subtitle="Admin Notifications" />
         {decodedToken?.userType == "admin" && <CreateNotification />}
         {/* Display Notification Starts */}

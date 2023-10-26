@@ -1,27 +1,13 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import Cookies from "universal-cookie";
-import { BACKEND_URI } from "../../constants";
 import { useNavigate } from "react-router-dom";
 import { useAddLoginMutation } from "../../state/api";
 const Login = () => {
   const navigate = useNavigate();
   const [token, setToken] = useState(false);
   const cookies = new Cookies();
-  // useEffect(() => {
-  //   async function getAuth() {
-  //     try {
-  //       const auth = await axios.get(`${BACKEND_URI}/users/auth`, null, {
-  //         withCredentials: true,
-  //       });
-  //       if (auth.data.token) {
-  //         setToken(auth.data.token);
-  //         navigate("/dashboard");
-  //       }
-  //     } catch (error) {}
-  //   }
-  //   // getAuth();
-  // }, []);
+
   const [userLoginer] = useAddLoginMutation();
 
   const [values, setValues] = useState({
@@ -29,7 +15,6 @@ const Login = () => {
     userPass: "",
   });
   const [errorMessage, setErrorMessage] = React.useState("");
-  // const { data, isLoading } = useAddLoginMutation(values, { skip: true });
 
   const handleSubmit = async (e) => {
     e.preventDefault();

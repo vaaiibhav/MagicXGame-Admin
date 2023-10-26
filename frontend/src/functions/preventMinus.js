@@ -3,14 +3,12 @@ const preventMinus = (e) => {
   if (
     !(
       e.code !== null &&
-      (eventCode.includes("digit") ||
-        eventCode.includes("arrow") ||
+      (eventCode.includes("arrow") ||
         eventCode.includes("home") ||
         eventCode.includes("end") ||
         eventCode.includes("backspace") ||
-        eventCode.includes("NumpadSubtract") ||
-        eventCode.includes("Minus") ||
-        (eventCode.includes("numpad") && eventCode.length === 7))
+        eventCode.includes("numpad")) &&
+      !(eventCode.includes("minus") || eventCode.includes("numpadsubtract"))
     )
   ) {
     e.preventDefault();
