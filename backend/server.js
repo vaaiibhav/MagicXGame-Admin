@@ -33,7 +33,7 @@ const logger = winston.createLogger({
 });
 app.use(
   cors({
-    origin: FE_URI,
+    origin: true,
     methods: ["POST", "GET", "PUT", "DELETE"],
     credentials: true,
   })

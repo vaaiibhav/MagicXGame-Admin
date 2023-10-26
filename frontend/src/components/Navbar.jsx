@@ -48,7 +48,7 @@ const Navbar = ({ user, isSidebarOpen, setIsSidebarOpen }) => {
     try {
       token = cookies.get("token");
     } catch (error) {
-      console.log("error:", error);
+      console.error("error:", error);
     }
     dispatch(setToken(token));
     if (token) {

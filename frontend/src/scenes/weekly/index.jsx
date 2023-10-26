@@ -39,7 +39,7 @@ const Weekly = () => {
   }, [data]); // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
-    <Box m="1.5rem 2.5rem">
+    <Box m="1.5rem 1rem">
       <Header title="Weekly SALES" subtitle="Chart of monthlysales" />
       <Box height="75vh">
         {data ? (
