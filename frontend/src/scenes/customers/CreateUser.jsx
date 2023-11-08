@@ -3,7 +3,6 @@ import { useSelector } from "react-redux";
 import { Toaster, toast } from "sonner";
 import jwtDecode from "jwt-decode";
 import { useAddCustomerMutation } from "../../state/api";
-import preventMinus from "../../functions/preventMinus";
 
 import {
   Button,
@@ -33,18 +32,25 @@ const CreateUser = () => {
       [evt.target.name]: value,
     });
   };
+
   //  create new Customer
   const [addNewUser] = useAddCustomerMutation();
   const submitNewUser = async () => {
     if (
-      newUserData?.userName === "" ||
-      newUserData?.userCity === "" ||
-      newUserData?.userPhoneNumber === ""
+      newUser?.userName === "" ||
+      newUser?.userCity === "" ||
+      newUser?.userPhoneNumber === "" ||
+      (decodedToken?.userType === "admin" &&
+        (newUser?.userSubAdminPercentage === "" ||
+          newUser?.userMasterPercentage === ""))
     ) {
       return toast.error("Please Fill in all Fields");
     }
     // Api to Submit newUser
-    setNewUserData(await addNewUser(newUser));
+    const serverNewUserData = await addNewUser(newUser);
+    if (serverNewUserData?.error)
+      return toast.error(serverNewUserData?.error?.data?.error);
+    setNewUserData(serverNewUserData);
     toast("User Added Successfully");
   };
 
@@ -130,7 +136,6 @@ const CreateUser = () => {
               label="Phone Number"
               type="number"
               fullWidth
-              // onKeyDown={preventMinus}
               onChange={handleUserCreate}
               variant="filled"
             />
@@ -144,7 +149,6 @@ const CreateUser = () => {
                   name="userSubAdminPercentage"
                   label="Sub Admin Percentage"
                   type="number"
-                  // onKeyDown={preventMinus}
                   fullWidth
                   variant="filled"
                 />
@@ -156,7 +160,6 @@ const CreateUser = () => {
                   name="userMasterPercentage"
                   label="Master Percentage"
                   type="number"
-                  onKeyDown={preventMinus}
                   fullWidth
                   variant="filled"
                 />

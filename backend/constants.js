@@ -4,6 +4,7 @@ const POSTGRE_DB = "gudGudiGame";
 const POSTGRE_UNAME = "postgres";
 const POSTGRE_PASSWD = "Pass@123";
 const PORT = 8000;
+const gudGudiGameTimer = 60;
 const SALTROUNDS = 10;
 // const FE_URI = ["http://localhost:3000", "http://192.168.1.2:3000"];
 const FE_URI = true;
@@ -35,6 +36,7 @@ module.exports = {
   TOKEN_HEADER_KEY,
   POSTGRE_DB,
   POSTGRE_PASSWD,
+  gudGudiGameTimer,
   POSTGRE_UNAME,
   SALTROUNDS,
   error,

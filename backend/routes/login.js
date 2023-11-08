@@ -61,4 +61,17 @@ router.post(
     res.json(pinPassChange).status(200);
   })
 );
+router.post(
+  "/login-game",
+  tryCatcher(async (req, res) => {
+    const { loginID, loginPD } = req.body;
+    if (!loginID || !loginPD) {
+      return res.status(401).json({ error: "Empty Credentials" });
+    }
+    const user = await loginUser(loginID, loginPD);
+    if (!user) return res.status(409).json({ error: "Password Invalid" });
+    else if (user.error) return res.status(409).json(user);
+    res.status(200).json({ token: user });
+  })
+);
 module.exports = router;

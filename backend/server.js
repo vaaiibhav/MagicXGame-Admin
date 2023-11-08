@@ -1,8 +1,10 @@
 const express = require("express");
+const http = require("http");
 const app = express();
 const socketClusterServer = require("socketcluster-server");
 const server = require("http").createServer(app);
 let agServer = socketClusterServer.attach(server);
+require("./socketServes")(agServer);
 
 const winston = require("winston");
 const NewrelicWinston = require("newrelic-winston");

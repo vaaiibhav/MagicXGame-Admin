@@ -46,6 +46,7 @@ const EditUser = (props) => {
     });
   };
   const submitEditUser = () => {
+    console.log(editUserData);
     editCustomer(editUserData);
   };
 
