@@ -19,11 +19,9 @@ import { DataGrid } from "@mui/x-data-grid";
 import CreateUser from "./CreateUser";
 import ResetPinPass from "./ResetPinPass";
 import EditUser from "./EditUser";
-import jwtDecode from "jwt-decode";
+
 const Customers = () => {
   const theme = useTheme();
-  const token = useSelector((state) => state?.global?.token);
-  const decodedToken = jwtDecode(token) || {};
 
   // displaying Existing Customers
   const { data: usersData, isLoading: usersLoading } = useGetCustomersQuery();
@@ -40,7 +38,7 @@ const Customers = () => {
     setPinOpen(pinOpen ? false : true);
   };
   const pinReset = async (params) => {
-    return await editPin({ userLoginID: params.row.userLoginID });
+    return await editPin({ userLoginID: params?.row?.userLoginID });
   };
 
   const resetPinButton = (params) => {

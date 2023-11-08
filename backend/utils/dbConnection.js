@@ -14,7 +14,7 @@ let sequelize = new Sequelize(POSTGRE_DB, POSTGRE_UNAME, POSTGRE_PASSWD, {
 });
 try {
   sequelize.authenticate();
-  successConsole("Connection has been established successfully.");
+  successConsole("PostGre DB Connection success.");
 } catch (error) {
   dangerConsole({ error });
 }

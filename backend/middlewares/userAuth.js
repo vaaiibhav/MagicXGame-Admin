@@ -21,7 +21,7 @@ const validateToken = (req, res, next) => {
   try {
     const token = req.cookies.token;
     if (!token) {
-      return res.json({ error: "No Token" });
+      return res.json({ error: "No Token, Please Re Login" });
     }
     const verified = jwt.verify(token, JWT_SECRET_KEY);
     if (verified) {
@@ -36,7 +36,7 @@ const validateToken = (req, res, next) => {
   } catch (error) {
     // Access Denied
     console.log("error:", error);
-    return res.status(401).json({ error: "Token Expired" });
+    return res.status(401).json({ error: "Token Expired, Please Re Login" });
   }
 };
 

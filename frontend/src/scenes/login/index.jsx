@@ -7,6 +7,9 @@ const Login = () => {
   const navigate = useNavigate();
   const [token, setToken] = useState(false);
   const cookies = new Cookies();
+  useEffect(() => {
+    cookies.remove("gudGuditoken");
+  }, []);
 
   const [userLoginer] = useAddLoginMutation();
 
@@ -23,7 +26,7 @@ const Login = () => {
     }
     const userLoginResponse = await userLoginer(values);
     if (userLoginResponse?.data?.token) {
-      cookies.set("token", userLoginResponse?.data?.token);
+      cookies.set("gudGuditoken", userLoginResponse?.data?.token);
       navigate("/dashboard");
     }
   };

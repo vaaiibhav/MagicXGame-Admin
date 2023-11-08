@@ -169,6 +169,13 @@ const loginUser = async (userLoginID, userPass) => {
       where: { userLoginID },
     });
     if (userCred) {
+      if (
+        !(
+          userCred.dataValues.userType == TYPE_RETAILER ||
+          userCred.dataValues.userType == TYPE_MASTER
+        )
+      )
+        return { error: "Not Allowed to Play Game" };
       const loginAllowed = await validateUser(userPass, userCred.userPassHash);
       if (!loginAllowed) {
         return loginAllowed;
