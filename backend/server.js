@@ -1,10 +1,19 @@
 const express = require("express");
-const http = require("http");
 const app = express();
-const socketClusterServer = require("socketcluster-server");
+const socketio = require("socket.io");
 const server = require("http").createServer(app);
-let agServer = socketClusterServer.attach(server);
-require("./socketServes")(agServer);
+
+// Socket Instance
+const io = socketio(server, {
+  cors: {
+    origin: "*",
+    methods: ["GET", "POST"],
+    // credentials: true,
+  },
+});
+
+// let agServer = socketClusterServer.attach(server);
+require("./sockets/socketServes")(io);
 
 const winston = require("winston");
 const NewrelicWinston = require("newrelic-winston");
@@ -26,8 +35,6 @@ const Port = 8000;
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
-// app.use(bodyParser.json());
-// app.use(bodyParser.urlencoded({ extended: false }));
 app.use(morgan("common"));
 const logger = winston.createLogger({
   transports: [
@@ -56,6 +63,7 @@ app.use(function (err, req, res, next) {
       .status(errors.INTERNAL_SERVER_ERROR.status)
       .send(errors.INTERNAL_SERVER_ERROR);
 });
+
 server.listen(Port, () => {
   successConsole(`Server Listening on ${Port}`);
 });

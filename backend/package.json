@@ -6,7 +6,7 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node -r newrelic server.js NEW_RELIC_APP_NAME=gudGudiAdminPanelnService NEW_RELIC_LICENSE_KEY=cc7a903d1be60bda941cafc44b1fe452FFFFNRAL ",
-    "startDev": "nodemon --inspect ./server.js"
+    "devStart": "nodemon --inspect ./server.js"
   },
   "repository": {
     "type": "git",
@@ -37,7 +37,7 @@
     "pg": "^8.11.3",
     "pg-hstore": "^2.3.4",
     "sequelize": "^6.32.1",
-    "socketcluster-server": "^19.0.1",
+    "socket.io": "^4.7.2",
     "unique-string-generator": "^1.1.1",
     "winston": "^3.10.0"
   }
