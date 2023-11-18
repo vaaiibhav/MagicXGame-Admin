@@ -1,30 +1,41 @@
-var Timer = require("easytimer.js").Timer;
-var timer = new Timer();
 const { gudGudiGameTimer } = require("../constants");
-
-const timeRunner = (socket, clientCount) => {
-  if (clientCount == 1) {
-    timer.start({
-      countdown: true,
-      startValues: { seconds: gudGudiGameTimer },
-    });
-    timer.addEventListener("secondsUpdated", function (e) {
-      let countdown = timer.getTotalTimeValues().seconds;
-      countdown = parseInt(countdown);
-      socket.transmit("gameTimer", countdown);
-      return countdown;
-    });
-    timer.addEventListener("stopped", function (e) {
-      console.log("New Game Event:");
-      timer.start({
-        countdown: true,
-        startValues: { seconds: gudGudiGameTimer },
-      });
-    });
-  } else if (clientCount == 0) {
-    timer.stop();
+const {
+  generateToken,
+  validateToken,
+  passwordHashing,
+  validateUser,
+  compareUser,
+} = require("../middlewares/userAuth");
+const { UserModel, UserLocation } = require("../models");
+var timeLeft = gudGudiGameTimer;
+let timerRunning = false;
+const timeRunner = (io) => {
+  function* countdownTimer() {
+    while (true) {
+      yield timeLeft--;
+      if (timeLeft < 0) {
+        timeLeft = gudGudiGameTimer;
+      }
+    }
   }
+  if (!timerRunning) {
+    timerRunning = true;
+    const timerGenerator = countdownTimer();
+    function countdown() {
+      const remainingSeconds = timerGenerator.next().value;
+      console.log(remainingSeconds + " seconds remaining");
+      io.emit("gameTimer", remainingSeconds);
+      setTimeout(countdown, 1000);
+    }
+    countdown();
+  }
+};
+const userBalance = (token, socket) => {
+  validateToken(token);
+  UserModel.findOne();
+  socket.emit("sendUserBalance", 54700);
 };
 module.exports = {
   timeRunner,
+  userBalance,
 };

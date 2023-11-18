@@ -16,7 +16,6 @@ const generateToken = (data) => {
   });
   return token;
 };
-
 const validateToken = (req, res, next) => {
   try {
     const token = req.cookies.token;
