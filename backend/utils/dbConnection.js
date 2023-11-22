@@ -11,6 +11,10 @@ const { Sequelize } = require("sequelize");
 let sequelize = new Sequelize(POSTGRE_DB, POSTGRE_UNAME, POSTGRE_PASSWD, {
   host: "localhost",
   dialect: "postgres",
+  // Increase the timeout (in milliseconds)
+  dialectOptions: {
+    statement_timeout: 30000, // 30 seconds timeout
+  },
 });
 try {
   sequelize.authenticate();
