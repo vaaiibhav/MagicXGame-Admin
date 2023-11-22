@@ -29,7 +29,6 @@ const validateToken = (req, res, next) => {
       return "success";
     } else {
       // Access Denied
-      console.log("fail:", fail);
       return "fail";
     }
   } catch (error) {
@@ -38,7 +37,21 @@ const validateToken = (req, res, next) => {
     return res.status(401).json({ error: "Token Expired, Please Re Login" });
   }
 };
-
+const validateSocketToken = (token) => {
+  try {
+    const verified = jwt.verify(token, JWT_SECRET_KEY);
+    if (verified) {
+      const decodedToken = jwt.decode(token);
+      return decodedToken;
+    } else {
+      // Access Denied
+      return { error: "Token Failed, Please Re Login" };
+    }
+  } catch (error) {
+    console.log("error:", error);
+    return { error: "Token Expired, Please Re Login" };
+  }
+};
 const passwordHashing = async (body) => {
   const { password, pin } = body;
   const userPassHash = await bcrypt
@@ -94,4 +107,5 @@ module.exports = {
   validateUser,
   compareUser,
   validatePin,
+  validateSocketToken,
 };
