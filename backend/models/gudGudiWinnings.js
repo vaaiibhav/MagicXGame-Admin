@@ -14,6 +14,7 @@ const GudGudiWinningsModel = sequelize.define("GudGudiWinnings", {
   slot3TotalBets: { type: DataTypes.INTEGER },
   slot4TotalBets: { type: DataTypes.INTEGER },
   slot5TotalBets: { type: DataTypes.INTEGER },
+  slotTotalBets: { type: DataTypes.INTEGER },
   slot0Winning: { type: DataTypes.INTEGER },
   slot1Winning: { type: DataTypes.INTEGER },
   slot2Winning: { type: DataTypes.INTEGER },
@@ -21,6 +22,9 @@ const GudGudiWinningsModel = sequelize.define("GudGudiWinnings", {
   slot4Winning: { type: DataTypes.INTEGER },
   slot5Winning: { type: DataTypes.INTEGER },
   totalWinning: { type: DataTypes.INTEGER },
+  remainingCurrentBetGiveout: { type: DataTypes.INTEGER },
+  hasGoldenDice: { type: DataTypes.BOOLEAN },
   gameID: { type: DataTypes.TEXT },
 });
+// GudGudiWinningsModel.sync({ alter: true, force: true });
 module.exports = GudGudiWinningsModel;

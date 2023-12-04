@@ -33,7 +33,7 @@ const validateToken = (req, res, next) => {
     }
   } catch (error) {
     // Access Denied
-    console.log("error:", error);
+    console.error("error:", error);
     return res.status(401).json({ error: "Token Expired, Please Re Login" });
   }
 };
@@ -48,7 +48,7 @@ const validateSocketToken = (token) => {
       return { error: "Token Failed, Please Re Login" };
     }
   } catch (error) {
-    console.log("error:", error);
+    console.error("error:", error);
     return { error: "Token Expired, Please Re Login" };
   }
 };
