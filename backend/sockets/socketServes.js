@@ -3,18 +3,20 @@ const {
   userDetails,
   getUserNamefromSocketToken,
   saveGudGudiBets,
+  getGameID,
 } = require("../controllers/socketController");
 module.exports = async function (io) {
   io.on("connection", (socket) => {
-    console.log("New Connection", socket.id);
     socket.emit("serverMessage", `Welcome ${socket.userName}`);
     timeRunner(io);
     socket.on("getMyDetails", async (message, callback) => {
       const userDetail = await userDetails(message, socket);
-      console.log("userDetail:", userDetail);
       callback(userDetail.userAvailableBalance);
     });
-    socket.on("gudGudiBets", (betsData) => saveGudGudiBets(betsData, socket));
+    socket.on("getGameID", getGameID);
+    socket.on("gudGudiBets", (betsData, cb) =>
+      saveGudGudiBets(betsData, socket, cb)
+    );
   });
 
   // SOcket TOken Auth

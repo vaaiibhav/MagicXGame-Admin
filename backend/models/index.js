@@ -5,5 +5,4 @@ exports.TransactionsModel = require("./transactionsModel");
 exports.RequestModel = require("./requestModel");
 exports.GudGudiModel = require("./gudGudiModel");
 exports.GudGudiWinningsModel = require("./gudGudiWinnings");
-// console.log("indexModel :", { userModel, UserLocation });
 // exports = { userModel, UserLocation };

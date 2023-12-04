@@ -119,7 +119,6 @@ const userPinUpdate = async (body) => {
     { userPassHash, userPinHash },
     { where: { userLoginID } }
   );
-  console.log("pinUser:", pinUser);
   return { userLoginID, password, pin };
 };
 const updateUser = async (

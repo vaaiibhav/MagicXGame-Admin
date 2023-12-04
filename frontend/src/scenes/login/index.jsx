@@ -26,7 +26,7 @@ const Login = () => {
     }
     const userLoginResponse = await userLoginer(values);
     if (userLoginResponse?.data?.token) {
-      cookies.set("gudGuditoken", userLoginResponse?.data?.token);
+      cookies.set("gudGudiAdminToken", userLoginResponse?.data?.token);
       navigate("/dashboard");
     }
   };

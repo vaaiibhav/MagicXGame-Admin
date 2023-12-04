@@ -44,9 +44,9 @@ const Navbar = ({ user, isSidebarOpen, setIsSidebarOpen }) => {
     dispatch(clearToken(token));
     navigate("/login");
   };
-  if (!isObjectEmpty(cookies.get("token") || {})) {
+  if (!isObjectEmpty(cookies.get("gudGudiAdminToken") || {})) {
     try {
-      token = cookies.get("token");
+      token = cookies.get("gudGudiAdminToken");
     } catch (error) {
       console.error("error:", error);
     }
