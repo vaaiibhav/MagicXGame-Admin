@@ -3,12 +3,13 @@ import axios from "axios";
 import Cookies from "universal-cookie";
 import { useNavigate } from "react-router-dom";
 import { useAddLoginMutation } from "../../state/api";
+import { gudGudiToken } from "../../Utils/constants";
 const Login = () => {
   const navigate = useNavigate();
   const [token, setToken] = useState(false);
   const cookies = new Cookies();
   useEffect(() => {
-    cookies.remove("gudGuditoken");
+    cookies.remove(gudGudiToken);
   }, []);
 
   const [userLoginer] = useAddLoginMutation();
@@ -26,7 +27,7 @@ const Login = () => {
     }
     const userLoginResponse = await userLoginer(values);
     if (userLoginResponse?.data?.token) {
-      cookies.set("gudGudiAdminToken", userLoginResponse?.data?.token);
+      cookies.set(gudGudiToken, userLoginResponse?.data?.token);
       navigate("/dashboard");
     }
   };

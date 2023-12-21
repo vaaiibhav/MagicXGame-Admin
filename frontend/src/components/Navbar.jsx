@@ -15,6 +15,7 @@ import profileImage from "../assets/profile.jpeg";
 import jwt_decode from "jwt-decode";
 import { isObjectEmpty } from "../functions/isEmpty";
 import { setToken, clearToken } from "../state/index";
+import { gudGudiToken } from "../Utils/constants";
 import {
   AppBar,
   Button,
@@ -44,9 +45,9 @@ const Navbar = ({ user, isSidebarOpen, setIsSidebarOpen }) => {
     dispatch(clearToken(token));
     navigate("/login");
   };
-  if (!isObjectEmpty(cookies.get("gudGudiAdminToken") || {})) {
+  if (!isObjectEmpty(cookies.get(gudGudiToken) || {})) {
     try {
-      token = cookies.get("gudGudiAdminToken");
+      token = cookies.get(gudGudiToken);
     } catch (error) {
       console.error("error:", error);
     }

@@ -41,6 +41,8 @@ const timeRunner = (io) => {
         const GudiWinningNumber = await getGudGudiWinningNumber();
         io.emit("gudGudiWinningNumbers", GudiWinningNumber);
       }
+      if (timeLeft === 58)
+        io.emit("gudGudiLastWinning", await gudGudiLastwinning());
     }
   }
   if (!timerRunning) {
@@ -61,6 +63,15 @@ const userDetails = async (message, socket) => {
     },
   });
 };
+const gudGudiLastwinning = async () => {
+  const lastTenRecords = await GudGudiWinningsModel.findAll({
+    limit: 10, // Limit the result to 10 records
+    order: [["createdAt", "DESC"]], // O
+  });
+  const dataValuesOnly = lastTenRecords.map((record) => record.dataValues);
+  console.log("dataValuesOnly:", dataValuesOnly);
+  return dataValuesOnly;
+};
 
 function calculateDiceValues(currentBetGiveout, sumsArray) {
   const winningHits = [0, 1, 3, 4, 5, 6];
@@ -71,6 +82,7 @@ function calculateDiceValues(currentBetGiveout, sumsArray) {
   function calculateAmount(hit, amount) {
     if (hit === 0) return 0;
     else if (hit === 1) return amount / 2;
+    else if (hit === 2) return amount;
     else if (hit === 3) return amount * 5;
     else if (hit === 4) return amount * 10;
     else if (hit === 5) return amount * 20;
