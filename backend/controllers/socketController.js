@@ -1,14 +1,14 @@
 const { gudGudiGameTimer, gudGudiPercentage } = require("../constants");
-const { createClient } = require("redis");
+// const { createClient } = require("redis");
 const { sequelize } = require("../utils/dbConnection");
 
 var redisClient;
 var addFromPreviousGiveout = 0;
-(async function () {
-  redisClient = await createClient()
-    .on("error", (err) => console.error("Redis Client Error", err))
-    .connect();
-})();
+// (async function () {
+//   redisClient = await createClient()
+//     .on("error", (err) => console.error("Redis Client Error", err))
+//     .connect();
+// })();
 const {
   generateToken,
   validateSocketToken,
@@ -73,66 +73,99 @@ const gudGudiLastwinning = async () => {
   return dataValuesOnly;
 };
 
-function calculateDiceValues(currentBetGiveout, sumsArray) {
-  const winningHits = [0, 1, 3, 4, 5, 6];
-  let result = null;
+async function getWinner(currentBetGiveout, sumsArray) {
+  let diceValues = new Array(6).fill(0);
+  let currentBuffer = currentBetGiveout;
   let totalWinning = 0;
   let hasGoldenDice = false;
-
-  function calculateAmount(hit, amount) {
-    if (hit === 0) return 0;
-    else if (hit === 1) return amount / 2;
-    else if (hit === 2) return amount;
-    else if (hit === 3) return amount * 5;
-    else if (hit === 4) return amount * 10;
-    else if (hit === 5) return amount * 20;
-    else if (hit === 6) return amount * 50;
-  }
-
-  function generate(combo, index, remainingGiveout, totalHits) {
-    if (index === 6) {
-      if (totalHits === 6 && remainingGiveout >= 0) {
-        result = combo.slice(); // Store valid combination
-        totalWinning = sumsArray.reduce(
-          (acc, amount, i) => acc + calculateAmount(combo[i], amount),
-          0
-        );
-
-        if (
-          totalWinning <= currentBetGiveout &&
-          totalWinning * 2 <= currentBetGiveout
-        ) {
-          totalWinning *= 2; // Double winnings if it fits in currentBetGiveout and can be doubled
-          hasGoldenDice = true;
+  let remainingHist = 0;
+  for (let index = 0; index < diceValues.length; index++) {
+    if (diceValues[index] === 0) {
+      let probNumbers = [1, 2, 3, 4, 5, 6];
+      for (let d = 1; d <= 6; d++) {
+        const randomIndex = Math.floor(Math.random() * probNumbers.length);
+        if (probNumbers[randomIndex] + remainingHist <= 6) {
+          let checkCon = await calculateDise(
+            probNumbers[randomIndex],
+            sumsArray[d],
+            currentBetGiveout
+          );
+          if (
+            checkCon.nearestHit !== -1 &&
+            checkCon.product <= currentBetGiveout
+          ) {
+            diceValues[index] = probNumbers[randomIndex];
+            totalWinning += checkCon.product;
+            currentBetGiveout -= checkCon.product;
+            remainingHist += probNumbers[randomIndex];
+            break;
+          } else {
+            probNumbers.splice(randomIndex, 1);
+          }
+        } else {
+          if (d === 6 || probNumbers.length === 0) {
+            diceValues[index] = 0;
+          } else {
+            probNumbers.splice(randomIndex, 1);
+          }
         }
       }
-      return;
     }
-
-    for (let hit of winningHits) {
-      const possibleHits = Math.min(6 - totalHits, hit);
-      combo.push(possibleHits);
-      const winningAmount = calculateAmount(possibleHits, sumsArray[index]);
-      generate(
-        combo,
-        index + 1,
-        remainingGiveout - winningAmount,
-        totalHits + possibleHits
-      );
-      combo.pop();
+  }
+  if (totalWinning * 2 <= currentBuffer) {
+    if (totalWinning === 0 && currentBuffer == 0) {
+      let randomNumber = Math.floor(Math.random() * 10) + 1;
+      if (randomNumber == 6) {
+        hasGoldenDice = true;
+      }
+    } else {
+      totalWinning *= 2;
+      currentBetGiveout - (totalWinning *= 2);
     }
   }
 
-  generate([], 0, currentBetGiveout, 0);
-  const remainingCurrentBetGiveout = currentBetGiveout - totalWinning;
-
   return {
-    diceValues: result,
+    diceValues,
     totalWinning,
-    remainingCurrentBetGiveout,
+    remainingCurrentBetGiveout: currentBetGiveout,
     hasGoldenDice,
   };
 }
+
+function calculateDise(hit, amount, currentBetGiveout) {
+  const products = {
+    0: 0,
+    1: amount / 2,
+    2: amount * 3,
+    3: amount * 5,
+    4: amount * 10,
+    5: amount * 20,
+    6: amount * 50,
+  };
+
+  const product = hit * amount;
+
+  // Find the nearest hit based on currentBetGiveout
+  let nearestHit = null;
+  let minDifference = Infinity;
+
+  for (const key in products) {
+    const difference = Math.abs(currentBetGiveout - products[key]);
+    if (difference < minDifference) {
+      minDifference = difference;
+      nearestHit = key;
+    }
+  }
+
+  // Check if the minimum difference is greater than a threshold (e.g., 10)
+  // If it is, consider it as no valid hit and return null for nearestHit
+  if (minDifference > 10) {
+    nearestHit = null;
+  }
+
+  return { nearestHit, product };
+}
+
 const getGudGudiWinningNumber = async () => {
   const {
     sumSlot0Bet,
@@ -144,12 +177,12 @@ const getGudGudiWinningNumber = async () => {
     sumTotalBet,
   } = await getAllBetsOnThisGame();
   let sumSlotArray = [
-    sumSlot0Bet,
-    sumSlot1Bet,
-    sumSlot2Bet,
-    sumSlot3Bet,
-    sumSlot4Bet,
-    sumSlot5Bet,
+    sumSlot0Bet ? sumSlot0Bet : 0,
+    sumSlot1Bet ? sumSlot1Bet : 0,
+    sumSlot2Bet ? sumSlot2Bet : 0,
+    sumSlot3Bet ? sumSlot3Bet : 0,
+    sumSlot4Bet ? sumSlot4Bet : 0,
+    sumSlot5Bet ? sumSlot5Bet : 0,
   ];
   let currentBetGiveout = (gudGudiPercentage * sumTotalBet) / 100;
   currentBetGiveout == 0
@@ -160,7 +193,7 @@ const getGudGudiWinningNumber = async () => {
     totalWinning,
     remainingCurrentBetGiveout,
     hasGoldenDice,
-  } = calculateDiceValues(currentBetGiveout, sumSlotArray);
+  } = await getWinner(currentBetGiveout, sumSlotArray);
   await GudGudiWinningsModel.create({
     slot0TotalBets: sumSlot0Bet ? sumSlot0Bet : 0,
     slot1TotalBets: sumSlot1Bet ? sumSlot0Bet : 0,
@@ -197,7 +230,10 @@ const getUserNamefromSocketToken = (token) => {
 const saveGudGudiBets = async (gudGudiBets, socket, callBack) => {
   gudGudiBets.userLoginID = socket.userLoginID;
   gudGudiBets.gameID = gameID;
-  console.log("gudGudiBets:", gudGudiBets);
+  console.log(
+    "gudGudiBets: -------------------------------------------",
+    gudGudiBets
+  );
   if (gudGudiBets.gameID > 0) await GudGudiModel.create(gudGudiBets);
   return callBack("success");
 };
