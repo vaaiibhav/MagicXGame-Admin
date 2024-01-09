@@ -18,9 +18,13 @@ export const globalSlice = createSlice({
     clearToken: (state) => {
       state.token = null;
     },
+    selectToken: (state) => {
+      return state.token;
+    },
   },
 });
 
-export const { setMode, setToken, clearToken } = globalSlice.actions;
+export const { setMode, setToken, clearToken, selectToken } =
+  globalSlice.actions;
 
 export default globalSlice.reducer;

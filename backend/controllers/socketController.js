@@ -26,8 +26,8 @@ const {
 const { successConsole } = require("../utils/colorConsoler");
 const { where } = require("sequelize");
 var timeLeft = gudGudiGameTimer;
+var gameID = 0;
 let timerRunning = false;
-let gameID = 0;
 const timeRunner = (io) => {
   async function* countdownTimer() {
     while (true) {
@@ -56,6 +56,10 @@ const timeRunner = (io) => {
     countdown();
   }
 };
+const getLatestGameID = async () => {
+  gameID = (await GudGudiModel.max("gameID")) + 1;
+};
+getLatestGameID();
 const userDetails = async (message, socket) => {
   return await UserModel.findOne({
     where: {
@@ -69,7 +73,6 @@ const gudGudiLastwinning = async () => {
     order: [["createdAt", "DESC"]], // O
   });
   const dataValuesOnly = lastTenRecords.map((record) => record.dataValues);
-  console.log("dataValuesOnly:", dataValuesOnly);
   return dataValuesOnly;
 };
 
@@ -213,32 +216,24 @@ const getGudGudiWinningNumber = async () => {
     hasGoldenDice,
     gameID,
   });
-  console.log("Dice Values:", diceValues);
-  console.log("Total Winning:", totalWinning);
-  console.log("Remaining CurrentBetGiveout:", remainingCurrentBetGiveout);
+
   addFromPreviousGiveout =
     remainingCurrentBetGiveout +
     (totalWinning == 0 ? addFromPreviousGiveout : 0);
-  console.log("addFromPreviousGiveout:", addFromPreviousGiveout);
-  console.log("Has Golden Dice:", hasGoldenDice);
 
   return { diceValues, hasGoldenDice };
 };
 const getUserNamefromSocketToken = (token) => {
   return validateSocketToken(token);
 };
-const saveGudGudiBets = async (gudGudiBets, socket, callBack) => {
+const saveGudGudiBets = async (gudGudiBets, socket) => {
   gudGudiBets.userLoginID = socket.userLoginID;
   gudGudiBets.gameID = gameID;
-  console.log(
-    "gudGudiBets: -------------------------------------------",
-    gudGudiBets
-  );
   if (gudGudiBets.gameID > 0) await GudGudiModel.create(gudGudiBets);
-  return callBack("success");
+  return; ///////;
 };
+
 const getGameID = (...callBack) => {
-  console.log("askGameID:", callBack);
   let callBackFunction = callBack[1];
   callBackFunction(gameID);
 };

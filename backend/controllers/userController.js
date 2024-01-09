@@ -162,6 +162,33 @@ const updateUser = async (
 //   return 0;
 // };
 
+const loginAdmin = async (userLoginID, userPass) => {
+  try {
+    const userCred = await UserModel.findOne({
+      where: { userLoginID },
+    });
+    if (userCred) {
+      if (
+        !(
+          userCred.dataValues.userType == TYPE_ADMIN ||
+          userCred.dataValues.userType == TYPE_SUBADMIN ||
+          userCred.dataValues.userType == TYPE_MASTER
+        )
+      )
+        return { error: "Not Allowed to Login" };
+      const loginAllowed = await validateUser(userPass, userCred.userPassHash);
+      if (!loginAllowed) {
+        return loginAllowed;
+      }
+      const userToken = generateToken(userCred);
+      return userToken ? userToken : false;
+    }
+    return userCred ? userCred : false;
+  } catch (error) {
+    dangerConsole({ error });
+    return error;
+  }
+};
 const loginUser = async (userLoginID, userPass) => {
   try {
     const userCred = await UserModel.findOne({
@@ -202,6 +229,7 @@ module.exports = {
   createUser,
   updateUser,
   loginUser,
+  loginAdmin,
   getUsersBalance,
   userPinUpdate,
 };
