@@ -1,7 +1,22 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import { BACKEND_URI } from "../Utils/constants";
+import Cookies from "universal-cookie";
+import { gudGudiToken } from "../Utils/constants";
+
+const cookies = new Cookies();
+
 export const api = createApi({
-  baseQuery: fetchBaseQuery({ baseUrl: BACKEND_URI, credentials: "include" }),
+  baseQuery: fetchBaseQuery({
+    baseUrl: BACKEND_URI,
+    credentials: "include",
+    prepareHeaders: (headers, { getState }) => {
+      const token = cookies.get(gudGudiToken); // Use your selector to get the token from the Redux store
+      if (token) {
+        headers.set("Authorization", `${token}`);
+      }
+      return headers;
+    },
+  }),
   reducerPath: "adminApi",
   tagTypes: [
     "User",

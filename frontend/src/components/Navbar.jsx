@@ -54,7 +54,11 @@ const Navbar = ({ user, isSidebarOpen, setIsSidebarOpen }) => {
     dispatch(setToken(token));
     if (token) {
       var decodedToken;
-      decodedToken = jwt_decode(token);
+      try {
+        decodedToken = jwt_decode(token);
+      } catch (error) {
+        console.error("error:", error);
+      }
     }
   } else {
     navigate("/login");

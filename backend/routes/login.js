@@ -9,6 +9,7 @@ const {
   createUser,
   updateUser,
   loginUser,
+  loginAdmin,
   userPinUpdate,
   getAvailableUser,
 } = require("../controllers/userController");
@@ -29,11 +30,12 @@ router.post(
     if (!userLoginID || !userPass) {
       return res.status(401).json({ error: "Empty Credentials" });
     }
-    const user = await loginUser(userLoginID, userPass);
+    const user = await loginAdmin(userLoginID, userPass);
     if (!user) {
       return res.status(409).json({ error: "Password Invalid" });
     }
-    res.status(200).json({ token: user });
+    if (user.error) res.status(401).json({ error: user.error });
+    res.cookie("token", user).status(200).json({ token: user });
   })
 );
 

@@ -26,6 +26,9 @@ const Login = () => {
       return setErrorMessage("Empty userLoginID or Password");
     }
     const userLoginResponse = await userLoginer(values);
+    if (userLoginResponse?.error) {
+      return setErrorMessage(userLoginResponse?.error?.data?.error);
+    }
     if (userLoginResponse?.data?.token) {
       cookies.set(gudGudiToken, userLoginResponse?.data?.token);
       navigate("/dashboard");

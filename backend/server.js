@@ -2,13 +2,14 @@ const express = require("express");
 const app = express();
 const socketio = require("socket.io");
 const server = require("http").createServer(app);
+const cors = require("cors");
 
 // Socket Instance
 const io = socketio(server, {
   cors: {
     origin: "*",
     methods: ["GET", "POST"],
-    // credentials: true,
+    credentials: true,
   },
 });
 
@@ -19,7 +20,6 @@ const winston = require("winston");
 const NewrelicWinston = require("newrelic-winston");
 winston.add(new NewrelicWinston());
 const bodyParser = require("body-parser");
-const cors = require("cors");
 const cookieParser = require("cookie-parser");
 const routes = require("./routes");
 const { FE_URI, errors } = require("./constants");
