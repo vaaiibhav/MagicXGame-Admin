@@ -39,6 +39,68 @@ const random_select = () => {
     return Math.floor(Math.random() * 37);
 }
 
+const number_selection = (all_user_bets, admin_select = 0) => {
+    let Admin_desided_number = admin_select;
+
+    if(Admin_desided_number !== 0){
+        return Admin_desided_number;
+    }
+
+    let total_bid_amount = 0;
+    all_user_bets.forEach(bid => {
+        total_bid_amount += bid_amount_calculation(bid.bid);
+    });
+
+    // find each number win amount to calculate
+    let win_arr = [];
+    for(let i = 0; i <= 36; i++){
+        win_arr[i] = 0;
+    }
+
+    all_user_bets.forEach(bid => {
+        if(bid.bid.single_bid.length > 0) {
+            bid.bid.single_bid.forEach(bet => {
+                win_arr[parseInt(bet.key)] += winning_amount(bet.bid.value, 1);
+            });
+        }
+
+        if(bid.bid.pack_bid.length > 0) {
+            bid.bid.pack_bid.forEach(bet => {
+                console.log(bet)
+                bet.key.forEach(key => {
+                    win_arr[parseInt(key)] += winning_amount(bet.bid.value * bet.key.length, bet.key.length);
+                });
+            });
+        }
+    });
+
+
+    let lowest_win_amount = 0;
+    let lowest_win_amount_index = 0;
+    for(let i = 0; i <= 36; i++){
+        if(win_arr[i] != 0) {
+            if(lowest_win_amount === 0) {
+                lowest_win_amount = win_arr[i];
+                lowest_win_amount_index = i;
+            }else if(lowest_win_amount > win_arr[i]) {
+                lowest_win_amount = win_arr[i];
+                lowest_win_amount_index = i;
+            }
+        }
+    }
+
+
+    if(total_bid_amount > lowest_win_amount) {
+        return lowest_win_amount_index;
+    }
+
+    let random_number = random_select();
+    while(!win_arr[random_number] == 0) {
+        random_number = random_select();
+    }
+    return random_number;
+}
+
 const bid_stop_start = (time) => {
     if(time < 10){
         return true;
@@ -187,6 +249,8 @@ const bid_amount_calculation = (bids) => {
     return bid_amount;
 }
 
+
+
 module.exports = {
     winning_amount,
     bid_stop_start,
@@ -196,5 +260,6 @@ module.exports = {
     win_check,
     random_select,
     debug,
-    bid_amount_calculation
+    bid_amount_calculation,
+    number_selection
 }

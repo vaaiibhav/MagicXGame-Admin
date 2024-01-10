@@ -6,7 +6,7 @@ const {
   getGameID,
   setUserBalance,
 } = require("../controllers/socketController");
-const { bid_seperation_in_pack_or_single, debug, bid_amount_calculation, win_check, random_select } = require('../sockets/logic');
+const { bid_seperation_in_pack_or_single, debug, bid_amount_calculation, win_check, random_select, number_selection } = require('../sockets/logic');
 
 require('dotenv').config();
 const { createClient } = require('redis');
@@ -15,8 +15,8 @@ const { createClient } = require('redis');
 const redisClient = createClient({
   password: process.env.REDIS_PASSWORD,
   socket: {
-      host: process.env.REDIS_HOST,
-      port: process.env.REDIS_PORT
+    host: process.env.REDIS_HOST,
+    port: process.env.REDIS_PORT
   }
 });
 
@@ -66,7 +66,7 @@ module.exports = async function (io) {
           socket.emit("balance", current_bal);
           setTimeout(async () => {
             let new_balance;
-            let res = win_check(bid, random_select());
+            let res = win_check(bid, number_selection(bid_store));
             // Set all raw data to redis, for future selection logic
             await redisClient.hSet(`bid_${user.userLoginID}_${new Date().toLocaleTimeString()}`, {
               user_bid: JSON.stringify(data.bet),
@@ -82,6 +82,7 @@ module.exports = async function (io) {
               setUserBalance(current_bal, user.userLoginID);
               socket.emit("balance", new_balance);
             }
+            bid_store = [];
           }, (data.second * 1000));
         } else {
           throw new Error("Insufficient balance!");
