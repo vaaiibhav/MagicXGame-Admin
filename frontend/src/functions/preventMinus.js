@@ -1,6 +1,6 @@
 const preventMinus = (event) => {
-  const dontAllow = ["-", "+", "e", "*", "/"];
-  if (dontAllow.includes(event.key)) {
+  const dontAllow = ["-", "+", "e", "*", "/", "`", "!", "E"];
+  if (dontAllow.includes(event)) {
     return event.preventDefault();
   }
 };

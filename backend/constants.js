@@ -7,7 +7,14 @@ const PORT = 8000;
 const gudGudiGameTimer = 60;
 const gudGudiPercentage = 80;
 const SALTROUNDS = 10;
-const FE_URI = ["http://localhost:3000", "http://192.168.1.2:3000"];
+const FE_URI = [
+  "*",
+  "http://localhost:3000",
+  "http://localhost:3001",
+  "http://localhost:5173",
+  "http://192.168.1.2:3000",
+  "http://192.168.1.2:3001",
+];
 // const FE_URI = true;
 const TYPE_SUBADMIN = "subadmin";
 const TYPE_ADMIN = "admin";

@@ -99,6 +99,17 @@ const compareUser = async (password) => {
     })
     .catch((err) => console.error(err.message));
 };
+const createHash = async (toHash) => {
+  return await bcrypt
+    .hash(toHash, SALTROUNDS)
+    .then((passHash) => {
+      return passHash;
+    })
+    .catch((err) => {
+      console.error(err.message);
+      return err.message;
+    });
+};
 
 module.exports = {
   generateToken,
@@ -108,4 +119,5 @@ module.exports = {
   compareUser,
   validatePin,
   validateSocketToken,
+  createHash,
 };

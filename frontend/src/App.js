@@ -21,6 +21,7 @@ import Logout from "./scenes/Logout";
 import NoPage from "./scenes/noPage";
 import Notifications from "./scenes/notifications";
 import Requests from "./scenes/requests";
+import JhandiMunda from "./scenes/gameResult/jhandimunda";
 
 function App() {
   const mode = useSelector((state) => state.global.mode);
@@ -48,6 +49,7 @@ function App() {
               <Route path="/logout" element={<Logout />} />
               <Route path="/requests" element={<Requests />} />
               <Route path="/notifications" element={<Notifications />} />
+              <Route path="/jhandimunda" element={<JhandiMunda />} />
             </Route>
             <Route path="*" element={<NoPage />} />
           </Routes>

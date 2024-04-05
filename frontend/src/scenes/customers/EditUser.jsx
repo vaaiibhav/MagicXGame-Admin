@@ -16,20 +16,30 @@ import {
 import { useEffect } from "react";
 const EditUser = (props) => {
   const token = useSelector((state) => state?.global?.token);
+  const propsUserDetails = props?.userDetails;
   const decodedToken = jwtDecode(token) || {};
   const [editCustomer] = useEditCustomerMutation();
   const [editUserOpen, setEditUserOpen] = useState(false);
   const [editUserData, setEditUserData] = useState({
-    userName: "",
-    userCity: "",
-    userPhoneNumber: "",
-    userSubAdminPercentage: "",
-    userMasterPercentage: "",
+    userName: propsUserDetails?.userName ? propsUserDetails?.userName : "",
+    userCity: propsUserDetails?.userCity ? propsUserDetails?.userCity : "",
+    userPhoneNumber: propsUserDetails?.userPhoneNumber
+      ? propsUserDetails?.userPhoneNumber
+      : "",
+    userSubAdminPercentage: propsUserDetails?.userSubAdminPercentage
+      ? propsUserDetails?.userSubAdminPercentage
+      : "",
+    userMasterPercentage: propsUserDetails?.userMasterPercentage
+      ? propsUserDetails?.userMasterPercentage
+      : "",
     userType: decodedToken.userType,
     userSubAdminId: decodedToken.userSubAdminId,
     userMasterId: decodedToken.userMasterId,
     userID: decodedToken.userID,
     userLoginID: decodedToken.userLoginID,
+    usersAllowedUnder: propsUserDetails?.usersAllowedUnder
+      ? propsUserDetails?.usersAllowedUnder
+      : "10",
   });
   useEffect(() => {
     setEditUserOpen(props.editUserOpen);
@@ -87,6 +97,7 @@ const EditUser = (props) => {
               name="userName"
               label="Name"
               type="text"
+              value={editUserData?.userName}
               onChange={handleUserEdit}
               fullWidth
               variant="filled"
@@ -95,6 +106,7 @@ const EditUser = (props) => {
               autoFocus
               margin="dense"
               id="userCity"
+              value={editUserData?.userCity}
               name="userCity"
               label="City"
               type="text"
@@ -105,10 +117,11 @@ const EditUser = (props) => {
             <TextField
               autoFocus
               margin="dense"
+              value={editUserData?.userPhoneNumber}
               id="userPhoneNumber"
               name="userPhoneNumber"
               label="Phone Number"
-              type="number"
+              type="phone"
               fullWidth
               onKeyDown={preventMinus}
               onChange={handleUserEdit}
@@ -119,6 +132,7 @@ const EditUser = (props) => {
                 <TextField
                   autoFocus
                   margin="dense"
+                  value={editUserData?.userSubAdminPercentage}
                   id="userSubAdminPercentage"
                   onChange={handleUserEdit}
                   name="userSubAdminPercentage"
@@ -133,6 +147,7 @@ const EditUser = (props) => {
                   margin="dense"
                   id="userMasterPercentage"
                   onChange={handleUserEdit}
+                  value={editUserData?.userMasterPercentage}
                   name="userMasterPercentage"
                   label="Master Percentage"
                   type="number"
@@ -145,6 +160,7 @@ const EditUser = (props) => {
                   margin="dense"
                   id="user"
                   placeholder="10"
+                  value={editUserData?.usersAllowedUnder}
                   onChange={handleUserEdit}
                   name="usersAllowedUnder"
                   label="Allowed Users"

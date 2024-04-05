@@ -61,7 +61,8 @@ const Notifications = () => {
       field: "createdAt",
       headerName: "Date ",
       flex: 0.6,
-      valueFormatter: (params) => new Date(params?.value).toLocaleString(),
+      valueFormatter: (params) =>
+        new Date(params?.value).toLocaleString("en-GB"),
     },
     {
       field: "notificationType",

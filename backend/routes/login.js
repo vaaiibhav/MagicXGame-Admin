@@ -21,7 +21,11 @@ const {
   successConsole,
   darkConsole,
 } = require("../utils/colorConsoler");
-const { passwordHashing, validateToken } = require("../middlewares/userAuth");
+const {
+  passwordHashing,
+  validateToken,
+  createHash,
+} = require("../middlewares/userAuth");
 
 router.post(
   "/",
@@ -31,10 +35,11 @@ router.post(
       return res.status(401).json({ error: "Empty Credentials" });
     }
     const user = await loginAdmin(userLoginID, userPass);
+    console.log("user:", user);
     if (!user) {
       return res.status(409).json({ error: "Password Invalid" });
     }
-    if (user.error) res.status(401).json({ error: user.error });
+    if (user.error) return res.status(401).json({ error: user.error });
     res.cookie("token", user).status(200).json({ token: user });
   })
 );
@@ -73,6 +78,14 @@ router.post(
     if (!user) return res.status(409).json({ error: "Password Invalid" });
     else if (user.error) return res.status(409).json(user);
     res.status(200).json({ token: user });
+  })
+);
+router.post(
+  "/createHash",
+  tryCatcher(async (req, res) => {
+    const { password } = req.body;
+    const hashedPassword = await createHash(password);
+    res.status(200).json({ hashedPassword: hashedPassword });
   })
 );
 module.exports = router;

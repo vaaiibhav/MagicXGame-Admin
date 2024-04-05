@@ -12,6 +12,8 @@ const transactionsRoute = require("./transactions");
 router.use("/transactions", transactionsRoute);
 const requestsRoute = require("./requests");
 router.use("/requests", requestsRoute);
+const gameResult = require("./gameResult");
+router.use("/game-result", gameResult);
 
 router.get(
   "/",

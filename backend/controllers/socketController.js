@@ -58,6 +58,7 @@ const timeRunner = (io) => {
 };
 const getLatestGameID = async () => {
   gameID = (await GudGudiModel.max("gameID")) + 1;
+  console.log("gameID IN:", gameID);
 };
 getLatestGameID();
 const userDetails = async (message, socket) => {

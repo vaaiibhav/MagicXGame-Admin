@@ -6,7 +6,6 @@ const GudGudiModel = sequelize.define("GudGudibets", {
   gudGudiBetID: {
     type: DataTypes.BIGINT,
     autoIncrement: true,
-    primaryKey: true,
   },
   slot0Bet: { type: DataTypes.INTEGER, defaultValue: 0 },
   slot1Bet: { type: DataTypes.INTEGER, defaultValue: 0 },
@@ -15,7 +14,7 @@ const GudGudiModel = sequelize.define("GudGudibets", {
   slot4Bet: { type: DataTypes.INTEGER, defaultValue: 0 },
   slot5Bet: { type: DataTypes.INTEGER, defaultValue: 0 },
   totalBet: { type: DataTypes.INTEGER, defaultValue: 0 },
-  gameID: { type: DataTypes.INTEGER },
+  gameID: { type: DataTypes.INTEGER, primaryKey: true },
   userLoginID: { type: DataTypes.TEXT },
 });
 // GudGudiModel.sync({ force: true, alter: true });
