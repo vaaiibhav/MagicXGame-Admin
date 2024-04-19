@@ -4,38 +4,7 @@ const {
   getUserNamefromSocketToken,
   saveGudGudiBets,
   getGameID,
-  setUserBalance,
 } = require("../controllers/socketController");
-const { bid_seperation_in_pack_or_single, debug, bid_amount_calculation, win_check, random_select, number_selection } = require('../sockets/logic');
-
-require('dotenv').config();
-const { createClient } = require('redis');
-
-// Redis client
-const redisClient = createClient({
-  password: process.env.REDIS_PASSWORD,
-  socket: {
-    host: process.env.REDIS_HOST,
-    port: process.env.REDIS_PORT
-  }
-});
-
-// Redis connect
-redisClient.connect();
-
-// Redis connection
-redisClient.on('connect', () => {
-  console.log('Redis client connected');
-});
-
-// Redis error handler
-redisClient.on('error', (err) => {
-  console.log('Redis error: ', err);
-});
-
-// Global bid store
-let bid_store = [];
-
 module.exports = async function (io) {
   io.on("connection", (socket) => {
     socket.emit("serverMessage", `Welcome ${socket.userName}`);
@@ -48,50 +17,6 @@ module.exports = async function (io) {
     socket.on("gudGudiBets", (betsData, cb) =>
       saveGudGudiBets(betsData, socket, cb)
     );
-    socket.on('update_balance', async (userID) => {
-      const userDetail = await userDetails(userID, socket);
-      socket.emit("balance", userDetail.userAvailableBalance);
-    });
-
-    socket.on('bet', async (data) => {
-      let bid = bid_seperation_in_pack_or_single(data.bet);
-      try {
-        const user = await userDetails(data.userID, socket);
-        console.log(bid_amount_calculation(bid))
-        if (parseInt(user.userAvailableBalance) >= bid_amount_calculation(bid)) {
-          bid_store.push({ userName: user.userName, bid, balance: parseInt(user.userAvailableBalance), time: data.second });
-          let bid_amount_made = bid_amount_calculation(bid);
-          let current_bal = parseInt(user.userAvailableBalance) - bid_amount_made;
-          setUserBalance(current_bal, user.userLoginID);
-          socket.emit("balance", current_bal);
-          setTimeout(async () => {
-            let new_balance;
-            let res = win_check(bid, number_selection(bid_store));
-            // Set all raw data to redis, for future selection logic
-            await redisClient.hSet(`bid_${user.userLoginID}_${new Date().toLocaleTimeString()}`, {
-              user_bid: JSON.stringify(data.bet),
-              bid_amount: bid_amount_made,
-              win_loss_amount: res.win === true ? res.win_amount : -bid_amount_made,
-              win_status: String(res.win),
-              balance: current_bal,
-              win_number: res.selected
-            });
-            socket.emit("win_loss", res);
-            if (res.win) {
-              new_balance = current_bal + res.win_amount;
-              setUserBalance(current_bal, user.userLoginID);
-              socket.emit("balance", new_balance);
-            }
-            bid_store = [];
-          }, (data.second * 1000));
-        } else {
-          throw new Error("Insufficient balance!");
-        }
-      } catch (error) {
-        console.log(error);
-        socket.emit("error", error.message);
-      }
-    });
   });
 
   // SOcket TOken Auth
