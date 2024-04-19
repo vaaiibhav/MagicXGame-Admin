@@ -67,16 +67,6 @@ const userDetails = async (message, socket) => {
     },
   });
 };
-const setUserBalance = async(message, loginID) => {
-  await UserModel.update(
-    { userAvailableBalance: message },
-    {
-      where: {
-        userLoginID: loginID,
-      },
-    }
-  );
-}
 const gudGudiLastwinning = async () => {
   const lastTenRecords = await GudGudiWinningsModel.findAll({
     limit: 10, // Limit the result to 10 records
@@ -272,5 +262,4 @@ module.exports = {
   getUserNamefromSocketToken,
   saveGudGudiBets,
   getGameID,
-  setUserBalance,
 };
