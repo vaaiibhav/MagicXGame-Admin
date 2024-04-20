@@ -3,6 +3,7 @@ import axios from "axios";
 import Cookies from "universal-cookie";
 import { useNavigate } from "react-router-dom";
 import { useAddLoginMutation } from "../../state/api";
+import Logo from "../../assets/Login/blueFighterLogo.png";
 import { gudGudiToken } from "../../Utils/constants";
 const Login = () => {
   const navigate = useNavigate();
@@ -39,10 +40,7 @@ const Login = () => {
       <form onSubmit={handleSubmit}>
         <section className="h-screen flex flex-col md:flex-row justify-center space-y-10 md:space-y-0 md:space-x-16 items-center bg-slate-800 my-2 mx-5 md:mx-0 md:my-0">
           <div className="md:w-1/3 max-w-sm">
-            <img
-              src="https://tecdn.b-cdn.net/img/Photos/new-templates/bootstrap-login-form/draw2.webp"
-              alt="Admin Image"
-            />
+            <img src={Logo} alt="Admin Image" />
           </div>
           <div className="md:w-1/3 max-w-sm">
             <div className="my-5 flex items-center before:mt-0.5 before:flex-1 before:border-t before:border-neutral-300 after:mt-0.5 after:flex-1 after:border-t after:border-neutral-300">
