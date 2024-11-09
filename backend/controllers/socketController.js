@@ -52,6 +52,7 @@ const timeRunner = (io) => {
     async function countdown() {
       const remainingSeconds = await timerGenerator.next();
       io.emit("gameTimer", remainingSeconds.value);
+      console.log("remainingSeconds", remainingSeconds.value);
       setTimeout(countdown, 1000);
     }
     countdown();
@@ -194,6 +195,7 @@ const getGudGudiWinningNumber = async () => {
     sumSlot4Bet ? sumSlot4Bet : 0,
     sumSlot5Bet ? sumSlot5Bet : 0,
   ];
+  sumTotalBet = sumTotalBet ? sumTotalBet : 0;
   let currentBetGiveout = (gudGudiPercentage * sumTotalBet) / 100;
   currentBetGiveout == 0
     ? addFromPreviousGiveout
@@ -206,12 +208,12 @@ const getGudGudiWinningNumber = async () => {
   } = await getWinner(currentBetGiveout, sumSlotArray);
   await GudGudiWinningsModel.create({
     slot0TotalBets: sumSlot0Bet ? sumSlot0Bet : 0,
-    slot1TotalBets: sumSlot1Bet ? sumSlot0Bet : 0,
-    slot2TotalBets: sumSlot2Bet ? sumSlot0Bet : 0,
-    slot3TotalBets: sumSlot3Bet ? sumSlot0Bet : 0,
-    slot4TotalBets: sumSlot4Bet ? sumSlot0Bet : 0,
-    slot5TotalBets: sumSlot5Bet ? sumSlot0Bet : 0,
-    slotTotalBets: sumTotalBet ? sumSlot0Bet : 0,
+    slot1TotalBets: sumSlot1Bet ? sumSlot1Bet : 0,
+    slot2TotalBets: sumSlot2Bet ? sumSlot2Bet : 0,
+    slot3TotalBets: sumSlot3Bet ? sumSlot3Bet : 0,
+    slot4TotalBets: sumSlot4Bet ? sumSlot4Bet : 0,
+    slot5TotalBets: sumSlot5Bet ? sumSlot5Bet : 0,
+    slotTotalBets: sumTotalBet ? sumTotalBet : 0,
     slot0Winning: diceValues[0],
     slot1Winning: diceValues[1],
     slot2Winning: diceValues[2],

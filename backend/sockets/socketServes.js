@@ -8,7 +8,11 @@ const {
 module.exports = async function (io) {
   io.on("connection", (socket) => {
     socket.emit("serverMessage", `Welcome ${socket.userName}`);
-    timeRunner(io);
+    try {
+      timeRunner(io);
+    } catch (error) {
+      console.error(error);
+    }
     socket.on("getMyDetails", async (message, callback) => {
       const userDetail = await userDetails(message, socket);
       callback(userDetail.userAvailableBalance);
