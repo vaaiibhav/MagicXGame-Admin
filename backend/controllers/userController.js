@@ -14,23 +14,30 @@ const {
   TYPE_RETAILER,
   TYPE_MASTER,
 } = require("../constants");
+const { where, Op } = require("sequelize");
 
 const getAllUsers = async (limit = 10, offset = 0, userType, userLoginID) => {
   if (userType === TYPE_ADMIN) {
-    return await UserModel.findAll({ order: [["userLoginID", "Desc"]] });
+    return await UserModel.findAll({
+      order: [["userLoginID", "Asc"]],
+      where: { userLoginID: { [Op.not]: "10" } },
+    });
   }
   if (userType === TYPE_SUBADMIN) {
     return await UserModel.findAll({
       where: { userSubAdminID: userLoginID },
-      order: [["userLoginID", "Desc"]],
+      order: [["userLoginID", "Asc"]],
     });
   }
   if (userType === TYPE_MASTER) {
     return await UserModel.findAll({
       where: { userMasterID: userLoginID },
-      order: [["userLoginID", "Desc"]],
+      order: [["userLoginID", "Asc"]],
     });
   }
+};
+const getAllUsersfromDB = async () => {
+  return await UserModel.findAll({ order: [["userLoginID", "Desc"]] });
 };
 const getUserbyUserName = async (userName) => {
   return await UserModel.findOne({
@@ -175,7 +182,7 @@ const loginAdmin = async (userLoginID, userPass) => {
           userCred.dataValues.userType == TYPE_MASTER
         )
       )
-        return { error: "Not Allowed to Login" };
+        return { error: "Retailers Not Allowed to Login" };
       const loginAllowed = await validateUser(userPass, userCred.userPassHash);
       if (!loginAllowed) {
         return loginAllowed;
@@ -221,15 +228,36 @@ const getUsersBalance = async (userLoginID) => {
     where: { userLoginID },
   });
 };
+const createAdmin = async () => {
+  const userPreSeed = {
+    userName: "New Admin",
+    userPassHash:
+      "$2b$10$Bh5Syej6VdyzK6cZpVTN8ePNAtA.c.KSnAcqDQREsTmWUdb1wSt/S",
+    userCity: "Dubai",
+    userBalance: 480000,
+    userAvailableBalance: 480000,
+    userPhoneNumber: "858955001",
+    userType: TYPE_ADMIN,
+    userPinHash: "$2b$10$HQ2kpn0D2O4rPEFkraUNneiY3PwbLeqpNjV0waOUSKQtAwOUvRqVS",
+    userLoginID: "10",
+  };
+  return await UserModel.create(userPreSeed);
+};
+const deleteAllUsersDb = async () => {
+  return await UserModel.destroy({ where: {} });
+};
 module.exports = {
   getAllUsers,
   getUserbyUserName,
   getUserbyId,
+  createAdmin,
+  deleteAllUsersDb,
   deleteUserbyId,
   createUser,
   updateUser,
   loginUser,
   loginAdmin,
+  getAllUsersfromDB,
   getUsersBalance,
   userPinUpdate,
 };

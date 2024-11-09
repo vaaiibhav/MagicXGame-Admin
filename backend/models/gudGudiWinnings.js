@@ -24,7 +24,8 @@ const GudGudiWinningsModel = sequelize.define("GudGudiWinnings", {
   totalWinning: { type: DataTypes.INTEGER },
   remainingCurrentBetGiveout: { type: DataTypes.INTEGER },
   hasGoldenDice: { type: DataTypes.BOOLEAN },
-  gameID: { type: DataTypes.TEXT },
+  gameID: { type: DataTypes.INTEGER },
 });
 // GudGudiWinningsModel.sync({ alter: true, force: true });
+
 module.exports = GudGudiWinningsModel;

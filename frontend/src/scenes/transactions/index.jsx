@@ -45,7 +45,8 @@ const Transactions = () => {
       field: "createdAt",
       headerName: "Date",
       flex: 1.2,
-      valueFormatter: (params) => new Date(params?.value).toLocaleString(),
+      valueFormatter: (params) =>
+        new Date(params?.value).toLocaleString("en-GB"),
     },
 
     // {

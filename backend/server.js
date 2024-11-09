@@ -54,6 +54,7 @@ app.use(
 app.use("/", routes);
 // GLobal Error Handler
 app.use(function (err, req, res, next) {
+  console.log("err:", err);
   console.log("requested URL", req.url);
   logger.log(err);
   console.log("Global Error", err);

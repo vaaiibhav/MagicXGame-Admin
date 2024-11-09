@@ -36,6 +36,7 @@ const timeRunner = (io) => {
         timeLeft = gudGudiGameTimer;
         io.emit("gameDate", new Date());
         io.emit("gameID", gameID++);
+        console.log("gameID IN:", gameID);
       }
       if (timeLeft === 2) {
         const GudiWinningNumber = await getGudGudiWinningNumber();
@@ -51,13 +52,20 @@ const timeRunner = (io) => {
     async function countdown() {
       const remainingSeconds = await timerGenerator.next();
       io.emit("gameTimer", remainingSeconds.value);
+      console.log("remainingSeconds", remainingSeconds.value);
       setTimeout(countdown, 1000);
     }
     countdown();
   }
 };
 const getLatestGameID = async () => {
-  gameID = (await GudGudiModel.max("gameID")) + 1;
+  let GudGudiWinningsMaxID = await GudGudiWinningsModel.max("gameID");
+  let GudGudiModelMaxID = await GudGudiModel.max("gameID");
+  gameID =
+    GudGudiWinningsMaxID > GudGudiModelMaxID
+      ? GudGudiWinningsMaxID + 1
+      : GudGudiModelMaxID + 1;
+  console.log("gameID IN:", gameID);
 };
 getLatestGameID();
 const userDetails = async (message, socket) => {
@@ -88,7 +96,7 @@ async function getWinner(currentBetGiveout, sumsArray) {
       for (let d = 1; d <= 6; d++) {
         const randomIndex = Math.floor(Math.random() * probNumbers.length);
         if (probNumbers[randomIndex] + remainingHist <= 6) {
-          let checkCon = await calculateDise(
+          let checkCon = await calculateDice(
             probNumbers[randomIndex],
             sumsArray[d],
             currentBetGiveout
@@ -135,7 +143,7 @@ async function getWinner(currentBetGiveout, sumsArray) {
   };
 }
 
-function calculateDise(hit, amount, currentBetGiveout) {
+function calculateDice(hit, amount, currentBetGiveout) {
   const products = {
     0: 0,
     1: amount / 2,
@@ -187,6 +195,7 @@ const getGudGudiWinningNumber = async () => {
     sumSlot4Bet ? sumSlot4Bet : 0,
     sumSlot5Bet ? sumSlot5Bet : 0,
   ];
+  sumTotalBet = sumTotalBet ? sumTotalBet : 0;
   let currentBetGiveout = (gudGudiPercentage * sumTotalBet) / 100;
   currentBetGiveout == 0
     ? addFromPreviousGiveout
@@ -199,12 +208,12 @@ const getGudGudiWinningNumber = async () => {
   } = await getWinner(currentBetGiveout, sumSlotArray);
   await GudGudiWinningsModel.create({
     slot0TotalBets: sumSlot0Bet ? sumSlot0Bet : 0,
-    slot1TotalBets: sumSlot1Bet ? sumSlot0Bet : 0,
-    slot2TotalBets: sumSlot2Bet ? sumSlot0Bet : 0,
-    slot3TotalBets: sumSlot3Bet ? sumSlot0Bet : 0,
-    slot4TotalBets: sumSlot4Bet ? sumSlot0Bet : 0,
-    slot5TotalBets: sumSlot5Bet ? sumSlot0Bet : 0,
-    slotTotalBets: sumTotalBet ? sumSlot0Bet : 0,
+    slot1TotalBets: sumSlot1Bet ? sumSlot1Bet : 0,
+    slot2TotalBets: sumSlot2Bet ? sumSlot2Bet : 0,
+    slot3TotalBets: sumSlot3Bet ? sumSlot3Bet : 0,
+    slot4TotalBets: sumSlot4Bet ? sumSlot4Bet : 0,
+    slot5TotalBets: sumSlot5Bet ? sumSlot5Bet : 0,
+    slotTotalBets: sumTotalBet ? sumTotalBet : 0,
     slot0Winning: diceValues[0],
     slot1Winning: diceValues[1],
     slot2Winning: diceValues[2],
@@ -216,12 +225,41 @@ const getGudGudiWinningNumber = async () => {
     hasGoldenDice,
     gameID,
   });
-
+  updateUserWinnings(diceValues, hasGoldenDice);
   addFromPreviousGiveout =
     remainingCurrentBetGiveout +
     (totalWinning == 0 ? addFromPreviousGiveout : 0);
 
   return { diceValues, hasGoldenDice };
+};
+const updateUserWinnings = async (diceValues, hasGoldenDice) => {
+  const getAllUsersBets = await GudGudiModel.findAll({
+    where: { gameID },
+  });
+  for (let index = 0; index < getAllUsersBets.length; index++) {
+    const eachUserBets = getAllUsersBets[index]?.dataValues;
+    await calculateUsersWinnings(eachUserBets, diceValues, hasGoldenDice);
+  }
+  async function calculateUsersWinnings(
+    eachUserBets,
+    diceValues,
+    hasGoldenDice
+  ) {
+    let betArray = [slot0Bet, slot1Bet, slot2Bet, slot3Bet, slot4Bet, slot5Bet];
+    for (
+      let eachUserBetIndex = 0;
+      eachUserBetIndex < betArray.length;
+      eachUserBetIndex++
+    ) {
+      console.log("betArray[eachUserBetIndex]:", betArray[eachUserBetIndex]);
+      console.log(
+        `eachUserBets[ $(betArray[eachUserBetIndex] )]:`,
+        eachUserBets[betArray[eachUserBetIndex]]
+      );
+      const slotEachBet = eachUserBets[betArray[eachUserBetIndex]];
+      console.log("slotEachBet:", slotEachBet);
+    }
+  }
 };
 const getUserNamefromSocketToken = (token) => {
   return validateSocketToken(token);
@@ -229,7 +267,22 @@ const getUserNamefromSocketToken = (token) => {
 const saveGudGudiBets = async (gudGudiBets, socket) => {
   gudGudiBets.userLoginID = socket.userLoginID;
   gudGudiBets.gameID = gameID;
-  if (gudGudiBets.gameID > 0) await GudGudiModel.create(gudGudiBets);
+  if (gudGudiBets.totalBet > 0) {
+    await GudGudiModel.create(gudGudiBets);
+    let currentUser = await UserModel.findOne({
+      where: { userLoginID: socket.userLoginID },
+    });
+    let userCurrentBalance =
+      currentUser.userAvailableBalance - gudGudiBets.totalBet;
+    await UserModel.update(
+      { userAvailableBalance: userCurrentBalance },
+      {
+        where: {
+          userLoginID: socket.userLoginID,
+        },
+      }
+    );
+  }
   return; ///////;
 };
 

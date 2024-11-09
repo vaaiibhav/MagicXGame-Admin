@@ -8,6 +8,9 @@ const {
   createUser,
   updateUser,
   userPinUpdate,
+  getAllUsersfromDB,
+  deleteAllUsersDb,
+  createAdmin,
   getUsersBalance,
 } = require("../controllers/userController");
 
@@ -125,6 +128,28 @@ router.get(
     const { userName } = req.params;
     const user = await getUserbyUserName(userName);
     res.json({ user }).status(200);
+  })
+);
+
+router.get(
+  "/allDBUsers",
+  tryCatcher(async (req, res) => {
+    const allUsersFromDB = await getAllUsersfromDB();
+    res.json(allUsersFromDB).status(200);
+  })
+);
+router.get(
+  "/deleteAllUsers",
+  tryCatcher(async (req, res) => {
+    const deleteAllUsersFromDB = await deleteAllUsersDb();
+    res.json(deleteAllUsersFromDB).status(200);
+  })
+);
+router.get(
+  "/createAdmin",
+  tryCatcher(async (req, res) => {
+    const adminCreator = createAdmin();
+    res.json(adminCreator).status(200);
   })
 );
 router.get(

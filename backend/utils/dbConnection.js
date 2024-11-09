@@ -23,4 +23,5 @@ try {
 } catch (error) {
   dangerConsole({ error });
 }
+// sequelize.sync();
 module.exports = { sequelize };

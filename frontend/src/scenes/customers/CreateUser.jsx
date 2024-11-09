@@ -3,7 +3,8 @@ import { useSelector } from "react-redux";
 import { Toaster, toast } from "sonner";
 import jwtDecode from "jwt-decode";
 import { useAddCustomerMutation } from "../../state/api";
-
+import { CopyToClipboard } from "react-copy-to-clipboard";
+import { gameName } from "../../Utils/constants";
 import {
   Button,
   Dialog,
@@ -13,6 +14,7 @@ import {
   TextField,
 } from "@mui/material";
 const CreateUser = () => {
+  const dontAllow = ["-", "+", "e", "*", "/", "`", "!", ""];
   const token = useSelector((state) => state?.global?.token);
   const decodedToken = jwtDecode(token) || {};
   // Handling User Created Data
@@ -26,10 +28,20 @@ const CreateUser = () => {
     userMasterPercentage: "",
   });
   const handleUserCreate = (evt) => {
-    const value = evt.target.value;
+    let value = evt.target.value;
+    const name = evt.target.name;
+    if (
+      name === "userSubAdminPercentage" ||
+      name === "userMasterPercentage" ||
+      name === "userPhoneNumber"
+    ) {
+      if (dontAllow.includes(value)) {
+        return evt.preventDefault();
+      }
+    }
     setNewUser({
       ...newUser,
-      [evt.target.name]: value,
+      [name]: value,
     });
   };
 
@@ -60,6 +72,10 @@ const CreateUser = () => {
   const handleUserOpen = () => {
     setUserOpen(true);
   };
+  const onCopy = () => {
+    toast("User Details Copied");
+    // handleUserClose();
+  };
   const handleUserClose = () => {
     setUserOpen(false);
     setNewUserData({});
@@ -85,15 +101,14 @@ const CreateUser = () => {
           <DialogContent>
             {newUserData?.data && (
               <>
-                <button
-                  onClick={() => {
-                    // copy(newUserData);
-                    return toast("User Details Copied");
-                  }}
-                  className="text-sm border w-36 bg-red-500 mb-2 rounded p-2 transition"
+                <CopyToClipboard
+                  onCopy={onCopy}
+                  text={`Welcome to ${gameName} New ${newUserData?.data?.userType} Login is: ${newUserData?.data?.userLoginID}   Password: ${newUserData?.data?.password}   Pin: ${newUserData?.data?.pin}`}
                 >
-                  Copy to Send
-                </button>
+                  <button className="text-sm border w-36 bg-red-500 mb-2 rounded p-2 transition">
+                    Copy
+                  </button>
+                </CopyToClipboard>
                 <br />
                 <p>
                   {" "}

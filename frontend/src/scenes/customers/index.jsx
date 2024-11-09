@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { useSelector } from "react-redux";
+import jwtDecode from "jwt-decode";
 import { Toaster, toast } from "sonner";
 import {
   Box,
@@ -21,6 +22,8 @@ import ResetPinPass from "./ResetPinPass";
 import EditUser from "./EditUser";
 
 const Customers = () => {
+  const token = useSelector((state) => state?.global?.token);
+  const decodedToken = jwtDecode(token) || {};
   const theme = useTheme();
 
   // displaying Existing Customers
@@ -31,25 +34,45 @@ const Customers = () => {
   const [pinOpen, setPinOpen] = useState(false);
   const [userPinReset, setPinReset] = useState({});
   const [editUserOpen, setEditUserOpen] = useState(false);
-  const handleEditUser = () => {
+  const [userDetails, setUserDetails] = useState({});
+  const handleEditUser = (editUserData) => {
+    setUserDetails(editUserData);
     setEditUserOpen(editUserOpen ? false : true);
   };
   const handlePinOpen = () => {
     setPinOpen(pinOpen ? false : true);
   };
   const pinReset = async (params) => {
-    return await editPin({ userLoginID: params?.row?.userLoginID });
+    return await editPin({ userLoginID: params?.userLoginID });
   };
-
+  const handleUserBlock = async (blockUserRow) => {
+    console.log("blockUserRow:", blockUserRow);
+  };
+  const userBlock = (blockUserRow) => {
+    return (
+      <strong>
+        <Button
+          variant="contained"
+          color={blockUserRow?.row?.userAllowed ? "warning" : "success"}
+          size="small"
+          onClick={() => {
+            handleUserBlock(blockUserRow?.row);
+          }}
+        >
+          {blockUserRow?.row?.userAllowed ? "Block" : "Allow"}
+        </Button>
+      </strong>
+    );
+  };
   const resetPinButton = (params) => {
     return (
       <strong>
         <Button
           variant="contained"
-          color="secondary"
+          color="warning"
           size="small"
           onClick={async () => {
-            await setPinReset(await pinReset(params));
+            await setPinReset(await pinReset(params?.row));
             handlePinOpen();
           }}
         >
@@ -66,7 +89,7 @@ const Customers = () => {
           color="secondary"
           size="small"
           onClick={() => {
-            handleEditUser();
+            handleEditUser(params?.row);
             // pinDialog(params);
           }}
         >
@@ -76,7 +99,7 @@ const Customers = () => {
     );
   };
 
-  const columns = [
+  let columns = [
     {
       field: "userLoginID",
       headerName: "Login ID",
@@ -95,11 +118,18 @@ const Customers = () => {
     {
       field: "userAvailableBalance",
       headerName: "Avail Balance",
-      flex: 0.6,
+      flex: 0.5,
     },
     {
       field: "userType",
       headerName: "Role",
+      renderCell: (params) => {
+        return params?.row?.userType == "subadmin"
+          ? "Sub Admin"
+          : params?.row?.userType == "master"
+          ? "Master"
+          : "Retailer";
+      },
       flex: 0.5,
     },
     {
@@ -125,32 +155,41 @@ const Customers = () => {
     {
       field: "userCity",
       headerName: "City",
-      flex: 0.6,
+      flex: 0.3,
     },
     {
-      field: "userMasterID",
-      headerName: "Master ID",
-      flex: 0.2,
+      field: "userAllowed",
+      headerName: "User Allowed",
+      renderCell: userBlock,
+      flex: 0.4,
     },
-    {
-      field: "userSubAdminID",
-      headerName: "SubAdmin ID",
-      flex: 0.2,
-    },
-    {
-      field: "createdAt",
-      headerName: "Created On",
-      flex: 0.7,
-      valueFormatter: (params) => new Date(params?.value).toLocaleString(),
-    },
+    // {
+    //   field: "userSubAdminID",
+    //   headerName: "SubAdmin ID",
+    //   flex: 0.2,
+    // },
+    // {
+    //   field: "createdAt",
+    //   headerName: "Created On",
+    //   flex: 0.7,
+    //   valueFormatter: (params) =>
+    //     new Date(params?.value).toLocaleString("en-GB"),
+    // },
   ];
+  if (decodedToken?.userType == "admin") {
+    columns.push({
+      field: "usersAllowedUnder",
+      headerName: "User Limit",
+      flex: 0.4,
+    });
+  }
   return (
     <Box m="1.5rem 1rem">
       <Header title="CUSTOMERS" subtitle="List of Customers" />
 
       <CreateUser />
       <ResetPinPass userPinReset={userPinReset} pinOpen={pinOpen} />
-      <EditUser editUserOpen={editUserOpen} />
+      <EditUser editUserOpen={editUserOpen} userDetails={userDetails} />
       {/* Display Users Start */}
       <Box
         mt="40px"

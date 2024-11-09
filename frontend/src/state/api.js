@@ -131,6 +131,10 @@ export const api = createApi({
       query: (id) => `management/performance/${id}`,
       providesTags: ["Performance"],
     }),
+    getJhandiMundabets: build.query({
+      query: () => "game-result/jhandimunda",
+      providesTags: ["jhandimunda"],
+    }),
     getDashboard: build.query({
       query: () => "general/dashboard",
       providesTags: ["Dashboard"],
@@ -153,6 +157,7 @@ export const {
   useGetGeographyQuery,
   useGetSalesQuery,
   useGetAdminsQuery,
+  useGetJhandiMundabetsQuery,
   useGetUserPerformanceQuery,
   useGetDashboardQuery,
   useAddCustomerMutation,

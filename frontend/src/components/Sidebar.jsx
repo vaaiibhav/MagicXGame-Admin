@@ -28,6 +28,7 @@ import {
   AdminPanelSettingsOutlined,
   TrendingUpOutlined,
   PieChartOutlined,
+  AirplaneTicket,
   CircleNotificationsOutlined,
 } from "@mui/icons-material";
 import { useEffect, useState } from "react";
@@ -70,8 +71,8 @@ const navItems = [
     icon: null,
   },
   {
-    text: "Jandi Munda",
-    icon: <PointOfSaleOutlined />,
+    text: "JhandiMunda",
+    icon: <AirplaneTicket />,
   },
   {
     text: "Fighter Wheel",

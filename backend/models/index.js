@@ -5,4 +5,6 @@ exports.TransactionsModel = require("./transactionsModel");
 exports.RequestModel = require("./requestModel");
 exports.GudGudiModel = require("./gudGudiModel");
 exports.GudGudiWinningsModel = require("./gudGudiWinnings");
+exports.gudGudiAssociations = require("./gudGudiAssociations");
+exports.GudGudiUsersWinnings = require("./gudGudiUsersWinnings");
 // exports = { userModel, UserLocation };
